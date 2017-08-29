@@ -1,0 +1,15 @@
+{
+  "short_name": "Theatersoft",
+  "name": "Theatersoft",
+  "icons": [
+    {
+      "src": "/assets/theatersoft-logo-round-accent.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    }
+  ],
+  "start_url": "/",
+  "display": "fullscreen",
+  "theme_color": "black",
+  "background_color": "black"
+}
