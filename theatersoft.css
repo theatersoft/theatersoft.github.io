@@ -1,5 +1,102 @@
+@import url("https://fonts.googleapis.com/css?family=Alegreya+Sans");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans");
+html,
+body,
+div,
+span,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-weight: inherit;
+  font-style: inherit;
+  font-family: inherit;
+  vertical-align: baseline;
+}
+body {
+  font-family: 'Open Sans';
+}
+strong,
+b,
+._base_bold {
+  font-weight: 300;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 15px 0;
+  font-family: 'Open Sans';
+  font-weight: 400;
+  line-height: 1.25em;
+}
+h1 {
+  font-size: 56px;
+}
+@media (max-width: 700px) {
+  h1 {
+    font-size: 48px;
+  }
+}
 h2 {
-  background-color: #00f;
+  font-size: 38px;
+}
+@media (max-width: 700px) {
+  h2 {
+    font-size: 30px;
+  }
+}
+h3 {
+  font-size: 26px;
+}
+@media (max-width: 700px) {
+  h3 {
+    font-size: 24px;
+  }
+}
+h4 {
+  font-size: 24px;
+}
+@media (max-width: 700px) {
+  h4 {
+    font-size: 20px;
+  }
+}
+p {
+  font-size: 16px;
+  line-height: 1.5em;
+  font-weight: 300;
+}
+em {
+  font-style: italic;
+}
+
+._header_header {
+  background: url("images/pexels-photo-106399.jpeg") center center/cover no-repeat fixed;
+}
+._header_content {
+  padding: 20vh 0;
+}
+
+._nav_header {
+  background: url("images/pexels-photo-106399.jpeg") center center/cover no-repeat fixed;
+}
+._nav_content {
+  padding: 20vh 0;
+}
+
+._home_warn {
+  background-color: #ffa500;
 }
 
 /*# sourceMappingURL=build.css.map */
