@@ -45,7 +45,7 @@ h1 {
 }
 @media (max-width: 700px) {
   h1 {
-    font-size: 48px;
+    font-size: 32px;
   }
 }
 h2 {
@@ -53,7 +53,7 @@ h2 {
 }
 @media (max-width: 700px) {
   h2 {
-    font-size: 30px;
+    font-size: 28px;
   }
 }
 h3 {
@@ -61,7 +61,7 @@ h3 {
 }
 @media (max-width: 700px) {
   h3 {
-    font-size: 24px;
+    font-size: 22px;
   }
 }
 h4 {
@@ -69,11 +69,11 @@ h4 {
 }
 @media (max-width: 700px) {
   h4 {
-    font-size: 20px;
+    font-size: 18px;
   }
 }
 p {
-  font-size: 16px;
+  font-size: 14px;
   line-height: 1.5em;
   font-weight: 300;
 }
