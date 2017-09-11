@@ -194,3 +194,24 @@ em {
 ._home_odd {
   flex-direction: row-reverse;
 }
+
+._page_page {
+  padding: 15px;
+  background-color: #eee;
+}
+._page_page section {
+  margin-bottom: 15px;
+  background-color: #f5f6f7;
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+}
+._page_page section img {
+  padding: 10px;
+  width: 400px;
+  flex: none;
+}
+._page_page section div {
+  padding: 20px;
+  flex: 1;
+}
