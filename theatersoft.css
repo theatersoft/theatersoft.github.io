@@ -91,7 +91,6 @@ em {
   align-content: center;
   text-align: center;
   color: #fff;
-  margin: 0;
 }
 ._header_image {
   background-image: url("images/pexels-photo-106399.jpeg");
@@ -165,10 +164,11 @@ em {
 }
 
 ._home_home {
+  padding: 15px;
   background-color: #eee;
 }
 ._home_home section {
-  margin: 15px;
+  margin-bottom: 15px;
   background-color: #f5f6f7;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
   display: flex;
@@ -180,9 +180,9 @@ em {
   flex: none;
 }
 ._home_home section div {
-  padding: 10px;
+  padding: 20px;
   flex: 1;
 }
-._home_home section ._home_odd {
+._home_odd {
   flex-direction: row-reverse;
 }
