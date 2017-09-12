@@ -73,7 +73,8 @@ h4 {
   }
 }
 p {
-  font-size: 14px;
+  margin-bottom: 10px;
+  font-size: 16px;
   line-height: 1.5em;
   font-weight: 300;
 }
@@ -207,22 +208,12 @@ em {
 }
 
 ._page_page {
-  padding: 15px;
+  padding: 0 15px;
   background-color: #eee;
 }
-._page_page section {
-  margin-bottom: 15px;
+._page_page article {
+  max-width: 1024px;
+  padding: 15px;
   background-color: #f5f6f7;
   box-shadow: 0 2px 4px 0 rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-}
-._page_page section img {
-  padding: 10px;
-  width: 400px;
-  flex: none;
-}
-._page_page section div {
-  padding: 20px;
-  flex: 1;
 }
