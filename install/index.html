@@ -48,7 +48,7 @@
 <p>Let’s say my domain is <code>example.com</code> and registered with Namecheap.com. The instructions may be slightly different for other registrars. I’m also using Ubuntu Linux on my PC, so you may need to perform the equivalent steps for your OS if necessary.</p>
 <h2 id="start-installing">Start installing</h2>
 <h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
-<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Rasbian Stretch Lite</a> image zip file. We’ll only use the Lite image because we have no use for the full desktop.</p>
+<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian Stretch Lite</a> image zip file. We’ll only use the Lite image because we have no use for the full desktop.</p>
 <p>Insert the microSD into your PC card reader and note the device name in <code>gnome-disks</code>.</p>
 <p>Unzip the image to the microSD (as <strong>root</strong> - replace X with the correct device name):</p>
 <pre><code>zcat 2017-09-07-raspbian-stretch-lite.zip &gt; /dev/sdX
@@ -77,7 +77,7 @@ EOF
 <pre><code>sudo nano /etc/ssh/sshd_config
 </code></pre><p>…change <code>#PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code> then exit and save.</p>
 <h3 id="3-install-node-js">3. Install Node.js</h3>
-<p>If we installed node from the raspian repository we’d only get v4.8.2. That’s too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
+<p>If we installed node from the raspbian repository we’d only get v4.8.2. That’s too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
 <pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
 </code></pre><p>Close and reopen your ssh terminal. Then install node 8:</p>
 <pre><code>nvm install 8
