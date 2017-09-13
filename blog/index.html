@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Install Theatersoft Home on a Raspberry Pi 3</title>
+    <title>Theatersoft - Blog</title>
     <meta name="viewport" content="width=device-width,user-scalable=0"/>
     <link rel="manifest" href="assets/manifest.json">
     <link rel="icon" type="image/png" href="/assets/theatersoft-logo-round-accent-48.png"/>
@@ -31,66 +31,7 @@
     </script>
 </head>
 <body>
-<div><nav class="_nav_nav"><div><ul><a href="/"><img src="/images/theatersoft-logo-only.svg" /><li>Home</li></a><div><li><a href="/blog">Blog</a></li><li><a href="/developers">Developers</a></li><li><a href="/solutions">Solutions</a></li><li><a target="_blank" href="https://github.com/theatersoft">GitHub</a></li></div><li class="_nav_toggle"><button><svg width="768" height="768" viewBox="0 0 768 768"><path d="M96 160h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4zM96 544h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4zM96 352h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4z"></path></svg></button></li></ul></div></nav><header class="_header_header"><div class="_header_image"></div><div class="_header_gradient"></div><div class="_header_content"></div></header><main class="_page_page"><article><div><h2 id="install-theatersoft-home-on-a-raspberry-pi-3">Install Theatersoft Home on a Raspberry Pi 3</h2>
-<p>Today I’ll walk through the steps to install Theatersoft Home on a Raspberry Pi 3. I’ll also connect a Z-Wave USB controller and include a couple of Z-Wave devices. When we finish we’ll have a working home automation hub that can be controlled from any browser, and you’ll be ready to build your own.</p>
-<h2 id="what-do-we-need-">What do we need?</h2>
-<p>Here’s my RPI3 inside a protective case:</p>
-<p class="ts-image"><img src="/images/blog/rpi3-install.png" alt="Raspberry Pi 3 install"></p>
-
-<p>You’ll also need:</p>
-<ul>
-<li>5V 2A power</li>
-<li>ethernet network (or WiFi, but I’ll skip that for now)</li>
-<li>microSD card</li>
-<li>Z-Wave controller (SIGMA ACC-UZB3-U-STA)</li>
-</ul>
-<p>You should also have a domain name that you’ll use to host the web app. The domain name will let us set up dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and automatic HTTPS certificates. You could skip this, but then you’d need to connect to your current IP address and override invalid certificate warnings from browsers.</p>
-<p>Let’s say my domain is <code>example.com</code> and registered with Namecheap.com. The instructions may be slightly different for other registrars. I’m also using Ubuntu Linux on my PC, so you may need to perform the equivalent steps for your OS if necessary.</p>
-<h2 id="start-installing">Start installing</h2>
-<h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
-<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Rasbian Stretch Lite</a> image zip file. We’ll only use the Lite image because we have no use for the full desktop.</p>
-<p>Insert the microSD into your PC card reader and note the device name in <code>gnome-disks</code>.</p>
-<p>Unzip the image to the microSD (as <strong>root</strong> - replace X with the correct device name):</p>
-<pre><code>zcat 2017-09-07-raspbian-stretch-lite.zip &gt; /dev/sdX
-</code></pre><p>Mount the boot partition in <code>gnome-disks</code>. Then create a file named <code>ssh</code> (replace X with your user name):</p>
-<pre><code>touch /media/user/boot/ssh
-</code></pre><p>Unmount and remove the microSD card.</p>
-<h3 id="2-boot-the-rpi">2. Boot the RPI</h3>
-<p>Insert the microSD card in the RPI and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
-<p>Find the RPI’s ip address. You can check your router’s admin page or:</p>
-<pre><code>nmap -sn 192.168.1.0/24 | grep pi
-Nmap scan report for pi (192.168.1.91)
-</code></pre><p>Then you can <code>ssh pi@192.168.1.91</code> (password is raspberry).</p>
-<blockquote>
-<p>First secure the RPI using ssh key authentication instead of password authentication (on PC):</p>
-<pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi@192.168.1.91
-</code></pre><p>Then update your ssh config:</p>
-<pre><code>cat &lt;&lt; EOF &gt;&gt; ~/.ssh/config
-Host pi
-Hostname 192.168.1.91
-User pi
-EOF
-</code></pre><p>…then you can:
- <code>ssh pi</code></p>
-</blockquote>
-<p>Then disable ssh password authentication:</p>
-<pre><code>sudo nano /etc/ssh/sshd_config
-</code></pre><p>…change <code>#PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code> then exit and save.</p>
-<h3 id="3-install-node-js">3. Install Node.js</h3>
-<p>If we installed node from the raspian repository we’d only get v4.8.2. That’s too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
-<pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
-</code></pre><p>Close and reopen your ssh terminal. Then install node 8:</p>
-<pre><code>nvm install 8
-</code></pre><p>Now <code>which node</code> will return something like <code>/home/pi/.nvm/versions/node/v8.5.0/bin/node</code> but the Theatersoft Home systemd service needs <code>node</code> and <code>npm</code> it to be in <code>/usr/local/bin</code>. You’ll need to symlink them:</p>
-<pre><code>n=$(which node); n=${n%/node}
-sudo ln -sf $n/node /usr/local/bin/node
-sudo ln -sf $n/npm /usr/local/bin/npm
-</code></pre><h3 id="4-install-theatersoft-home">4. Install Theatersoft Home</h3>
-<p>Create a directory where you’ll create your Theatersoft configuration (I suggest using your domain name). Then install, configure, and deploy <code>Home</code>:</p>
-<pre><code>mkdir example &amp;&amp; cd example &amp;&amp; npm install @theatersoft/home
-npm explore @theatersoft/home npm run config
-npm run deploy
-</code></pre><h3 id="5-install-zwave">5. Install ZWave</h3>
+<div><nav class="_nav_nav"><div><ul><a href="/"><img src="/images/theatersoft-logo-only.svg" /><li>Home</li></a><div><li><a href="/install">Install</a></li><li><a href="/solutions">Solutions</a></li><li><a target="_blank" href="https://github.com/theatersoft">GitHub</a></li></div><li class="_nav_toggle"><button><svg width="768" height="768" viewBox="0 0 768 768"><path d="M96 160h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4zM96 544h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4zM96 352h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4z"></path></svg></button></li></ul></div></nav><header class="_header_header"><div class="_header_image"></div><div class="_header_gradient"></div><div class="_header_content"></div></header><main class="_page_page"><article><div><h2 id="blog-under-construction">BLOG UNDER CONSTRUCTION</h2>
 </div></article></main></div>
 </body>
 </html>
