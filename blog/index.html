@@ -45,7 +45,37 @@
 <li>Z-Wave controller (SIGMA ACC-UZB3-U-STA)</li>
 </ul>
 <p>You should also have a domain name that you’ll use to host the web app. The domain name will let us set up dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and automatic HTTPS certificates. You could skip this, but then you’d need to connect to your current IP address and override invalid certificate warnings from browsers.</p>
-<p>Let’s say my domain is <code>example.com</code> and registered with Namecheap.com. The instructions may be slightly different for other registrars.</p>
+<p>Let’s say my domain is <code>example.com</code> and registered with Namecheap.com. The instructions may be slightly different for other registrars. I’m also using Linux on my desktop PC and laptops, so you’ll need to perform equivalent steps for your OS where necessary.</p>
+<h2 id="start-installing">Start installing</h2>
+<h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
+<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Rasbian Stretch Lite</a> image zip file. We’ll only use the Lite image because we have no use for the full desktop.</p>
+<p>Insert the microSD into your PC card reader and note the device name in <code>gnome-disks</code>.</p>
+<p>Unzip the image to the microSD (as root - replace X with the correct device name):</p>
+<pre><code>zcat 2017-09-07-raspbian-stretch-lite.zip &gt; /dev/sdX
+</code></pre><p>Mount the boot partition in <code>gnome-disks</code>. Then create a file named <code>ssh</code> (replace X with your user name):</p>
+<pre><code>touch /media/user/boot/ssh
+</code></pre><p>Unmount and remove the microSD card.</p>
+<h3 id="2-boot-the-rpi">2. Boot the RPI</h3>
+<p>Insert the microSD card in the RPI and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
+<p>Find the RPI’s ip address. You can check your router’s admin page or:</p>
+<pre><code>nmap -sn 192.168.1.0/24 | grep pi
+Nmap scan report for pi (192.168.1.91)
+</code></pre><p>Then you can <code>ssh pi@192.168.1.91</code> (password is raspberry).</p>
+<p>But first secure the RPI using ssh key authentication instead of password authentication (on PC):</p>
+<pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi@192.168.1.91
+</code></pre><p>Then I’ll update my ssh config:</p>
+<pre><code>cat &lt;&lt; EOF &gt;&gt; ~/.ssh/config
+Host pi
+Hostname 192.168.1.91
+StrictHostKeyChecking no
+User pi
+EOF
+</code></pre><p>…so I can just:
+ <code>ssh pi</code></p>
+<p>Then disable ssh password authentication:</p>
+<pre><code>pi@raspberrypi:~ $ sudo nano /etc/ssh/sshd_config
+</code></pre><p>…change <code>#PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code> then exit and save.</p>
+<h3 id="3-install-on-the-rpi">3. Install on the RPI</h3>
 </div></article></main></div>
 </body>
 </html>
