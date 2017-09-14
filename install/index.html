@@ -90,40 +90,38 @@ sudo ln -sf $n/npm /usr/local/bin/npm
 <pre><code>mkdir example &amp;&amp; cd example &amp;&amp; npm install @theatersoft/home
 npm explore @theatersoft/home npm run config
 npm run deploy
-</code></pre><h4 id="todo-rpi-issues">TODO RPI ISSUES</h4>
-<pre><code>&gt; systemctl restart theatersoft
+</code></pre><p>Theatersoft is now running:</p>
+<pre><code>pi@raspberrypi:~ $ systemctl status theatersoft
+● theatersoft.service - Theatersoft server
+   Loaded: loaded (/etc/systemd/system/theatersoft.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2017-09-14 03:39:55 UTC; 15min ago
+ Main PID: 22385 (node)
+   CGroup: /system.slice/theatersoft.service
+           └─22385 /usr/local/bin/node server.js
 
-Failed to restart theatersoft.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files
-
-sudo apt install policykit-1
-
-pi@raspberrypi:~/example $ systemctl restart theatersoft
-==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ===
-Authentication is required to restart &#39;theatersoft.service&#39;.
-Authenticating as: root
-Password:
-polkit-agent-helper-1: pam_authenticate failed: Authentication failure
-
-works as sudo
-
-pi@raspberrypi:~/example $ sudo -i
-root@raspberrypi:~# systemctl restart theatersoft
-
-ISSUE capture starting
-Sep 13 06:23:26 raspberrypi systemd[1]: theatersoft-capture.service: Service hold-off time over, scheduling restart.
-Sep 13 06:23:26 raspberrypi systemd[1]: Stopped Theatersoft capture server.
-Sep 13 06:23:26 raspberrypi systemd[1]: Starting Theatersoft capture server...
-Sep 13 06:23:28 raspberrypi systemd[1]: Started Theatersoft capture server.
-Sep 13 06:23:29 raspberrypi node[10012]: BUS parent error { Error: write EPROTO 1995796352:error:14077410:SSL routines:SSL23_GET_SERVER_HELLO:sslv3 alert handshake failure:../deps/openssl/openssl/ssl/s23_clnt.c:772:
-Sep 13 06:23:29 raspberrypi node[10012]:     at _errnoException (util.js:1026:11)
-Sep 13 06:23:29 raspberrypi node[10012]:     at WriteWrap.afterWrite [as oncomplete] (net.js:858:14) code: &#39;EPROTO&#39;, errno: &#39;EPROTO&#39;, syscall: &#39;write&#39; }
-Sep 13 06:23:29 raspberrypi node[10012]: (node:10012) UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): Error: write EPROTO 1995796352:error:14077410:SSL routines:SSL23_GET_SERVER_HELLO:sslv3 alert handshake failure:../deps/openssl/openssl/s
-Sep 13 06:23:29 raspberrypi node[10012]: (node:10012) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
-Sep 13 06:23:39 raspberrypi systemd[1]: theatersoft-capture.service: Service hold-off time over, scheduling restart.
-
-
-ISSUE cant connect to https://192.168.1.91/
-</code></pre><h3 id="5-install-zwave">5. Install ZWave</h3>
+Sep 14 03:39:55 raspberrypi systemd[1]: Started Theatersoft server.
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft { parent: undefined, children: { server: Promise { &lt;pending&gt;
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Bus name is /
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Config raspberrypi { _letsencrypt: { domain: &#39;example.com&#39;, e
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft starting Session undefined
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Client /opt/theatersoft/node_modules/@theatersoft/client
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Listening on port 443
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Starting service Device
+Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Started service Device
+</code></pre><h4 id="raspbian-user-systemctl-policies">Raspbian user systemctl policies</h4>
+<p>I noticed at this point I couldn’t control my service e.g. <code>systemctl restart theatersoft</code> with user <code>pi</code>:</p>
+<pre><code>Failed to restart theatersoft.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files
+</code></pre><p>Is normal for Raspbian? Though it works as <code>root</code>, I’m used to using a nonroot user. So to fix it:</p>
+<pre><code>sudo apt install policykit-1
+</code></pre><p>Then to fix policykit authentication requesting <code>root</code> instead of <code>pi</code> password:</p>
+<pre><code>sudo -i
+cat &lt;&lt; EOF &gt;&gt; /etc/polkit-1/localauthority.conf.d/51-admin.conf
+[Configuration]
+AdminIdentities=unix-group:sudo
+EOF
+systemctl restart polkit.service
+</code></pre><h3 id="5-setup-ddclient-and-configure-domain-name">5. Setup ddclient and configure domain name</h3>
+<h3 id="6-install-zwave">6. Install ZWave</h3>
 </div></article></main></div>
 </body>
 </html>
