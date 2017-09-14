@@ -37,15 +37,16 @@
 <p>Here’s my RPI3 inside a protective case:</p>
 <p class="ts-image"><img src="/images/blog/rpi3-install.png" alt="Raspberry Pi 3 install"></p>
 
-<p>You’ll also need:</p>
+<p>You’ll need:</p>
 <ul>
+<li>Raspberry Pi 3 Model B, (case optional)</li>
 <li>5V 2A power</li>
 <li>ethernet network (or WiFi, but I’ll skip that for now)</li>
 <li>microSD card</li>
 <li>Z-Wave controller (SIGMA ACC-UZB3-U-STA)</li>
 </ul>
 <p>You should also have a domain name that you’ll use to host the web app. The domain name will let us set up dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and automatic HTTPS certificates. You could skip this, but then you’d need to connect to your current IP address and override invalid certificate warnings from browsers.</p>
-<p>Let’s say my domain is <code>example.com</code> and registered with Namecheap.com. The instructions may be slightly different for other registrars. I’m also using Ubuntu Linux on my PC, so you may need to perform the equivalent steps for your OS if necessary.</p>
+<p>Let’s say my domain is <code>example.com</code> and registered with Namecheap.com. The instructions may be slightly different for other registrars. I’m using Linux on my PC, so you may need to perform the equivalent steps for a different OS.</p>
 <h2 id="start-installing">Start installing</h2>
 <h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
 <p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian Stretch Lite</a> image zip file. We’ll only use the Lite image because we have no use for the full desktop.</p>
@@ -57,25 +58,23 @@
 </code></pre><p>Unmount and remove the microSD card.</p>
 <h3 id="2-boot-the-rpi-and-set-up-ssh">2. Boot the RPI and set up SSH</h3>
 <p>Insert the microSD card in the RPI and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
-<p>Find the RPI’s ip address. You can check your router’s admin page or:</p>
+<p>You may need to find the RPI’s ip address. You can check your router’s admin page or:</p>
 <pre><code>nmap -sn 192.168.1.0/24 | grep pi
 Nmap scan report for pi (192.168.1.91)
-</code></pre><p>Then you can <code>ssh pi@192.168.1.91</code> (password is raspberry).</p>
+</code></pre><p>Since the RPI is running Avahi, I’ll connect using <code>ssh pi@raspberrypi.local</code>, or use your own ip address (the password is raspberry).</p>
 <blockquote>
-<p>First secure the RPI using ssh key authentication instead of password authentication (on PC):</p>
-<pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi@192.168.1.91
+<p>Secure the RPI by configuring key authentication and disabling password authentication:</p>
+<pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi@raspberrypi.local
 </code></pre><p>Then update your ssh config:</p>
 <pre><code>cat &lt;&lt; EOF &gt;&gt; ~/.ssh/config
 Host pi
-Hostname 192.168.1.91
+Hostname raspberrypi.local
 User pi
 EOF
-</code></pre><p>…then you can:
- <code>ssh pi</code></p>
-</blockquote>
-<p>Then disable ssh password authentication:</p>
+</code></pre><p>Then <code>ssh pi</code> and disable ssh password authentication on the RPI:</p>
 <pre><code>sudo nano /etc/ssh/sshd_config
-</code></pre><p>…change <code>#PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code> then exit and save.</p>
+</code></pre><p>Change <code>#PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code> then exit and save.</p>
+</blockquote>
 <h3 id="3-install-node-js">3. Install Node.js</h3>
 <p>If we installed node from the raspbian repository we’d only get v4.8.2. That’s too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
 <pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
@@ -90,7 +89,7 @@ sudo ln -sf $n/npm /usr/local/bin/npm
 <pre><code>mkdir example &amp;&amp; cd example &amp;&amp; npm install @theatersoft/home
 npm explore @theatersoft/home npm run config
 npm run deploy
-</code></pre><p>Theatersoft is now running:</p>
+</code></pre><p>Theatersoft is now running on port 443 (but you cannot connect with your browser until we configure a SSL certificate in the next step):</p>
 <pre><code>pi@raspberrypi:~ $ systemctl status theatersoft
 ● theatersoft.service - Theatersoft server
    Loaded: loaded (/etc/systemd/system/theatersoft.service; enabled; vendor preset: enabled)
@@ -108,7 +107,7 @@ Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Client /opt/theatersoft
 Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Listening on port 443
 Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Starting service Device
 Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Started service Device
-</code></pre><h4 id="raspbian-user-systemctl-policies">Raspbian user systemctl policies</h4>
+</code></pre><blockquote>
 <p>I noticed at this point I couldn’t control my service e.g. <code>systemctl restart theatersoft</code> with user <code>pi</code>:</p>
 <pre><code>Failed to restart theatersoft.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files
 </code></pre><p>Is normal for Raspbian? Though it works as <code>root</code>, I’m used to using a nonroot user. So to fix it:</p>
@@ -120,8 +119,23 @@ cat &lt;&lt; EOF &gt;&gt; /etc/polkit-1/localauthority.conf.d/51-admin.conf
 AdminIdentities=unix-group:sudo
 EOF
 systemctl restart polkit.service
-</code></pre><h3 id="5-setup-ddclient-and-configure-domain-name">5. Setup ddclient and configure domain name</h3>
-<h3 id="6-install-zwave">6. Install ZWave</h3>
+</code></pre></blockquote>
+<h3 id="5-setup-ddclient-and-configure-domain-name">5. Setup ddclient and configure domain name</h3>
+<blockquote>
+<p>RECOMMENDED FOR TESTING ONLY:</p>
+<p>You can create a self-signed certificate instead of configuring a domain name (accept all the defaults prompted from openssl):</p>
+<pre><code>cd /opt/theatersoft/.config/theatersoft
+openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.cer -days 365 -nodes
+</code></pre></blockquote>
+<p>Then restart the Theatersoft server <code>systemctl restart theatersoft</code> and now it will accept HTTPS connections.</p>
+<h3 id="6-pair-theatersoft-client">6. Pair Theatersoft Client</h3>
+<p>Open the Theatersoft Client app in your browser, e.g. <code>https://example.com</code> (or <code>https://raspberrypi.local</code> if testing without a domain name).</p>
+<p>This is the pinpad login screen, which appears because your browser doesn’t have a valid session cookie. Click the lock icon to pair with the default password <code>0000</code>. (You can change the default in <code>config.json</code>.) You are now connected and see a default black background since you have no camera feeds configured.</p>
+<blockquote>
+<p>Click (or tap - the client is fully touch enabled) near the center of the page to activate the tapmenu, and click the top status icon.</p>
+<p>Turn off the <code>Enable pairing</code> switch so no other clients can pair with your server, even if they know your password. Pairing should normally be disabled, to block brute force attacks.</p>
+</blockquote>
+<h3 id="7-install-zwave">7. Install ZWave</h3>
 </div></article></main></div>
 </body>
 </html>
