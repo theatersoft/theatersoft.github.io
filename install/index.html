@@ -160,6 +160,35 @@ home
 <p>Turn off the <code>Enable pairing</code> switch when you’re not pairing, so no one else can pair with your server even if they know your password. Pairing should normally be disabled to block brute force attacks.</p>
 </blockquote>
 <h3 id="7-install-zwave">7. Install ZWave</h3>
+<p>We’ll need to build the OpenZWave libs:</p>
+<pre><code>cd ~/
+wget https://github.com/OpenZWave/open-zwave/archive/v1.4.zip
+unzip v1.4.zip 
+cd open-zwave-1.4
+sudo apt install libudev-dev git-core
+make
+sudo make install
+sudo mv /usr/local/lib/arm-linux-gnueabihf/libopenzwave.so* /usr/lib/arm-linux-gnueabihf/
+</code></pre><p>Then add the Theatersoft ZWave service to your example <code>config.json</code>:</p>
+<pre><code>,
+        {
+          &quot;enabled&quot;: true,
+          &quot;module&quot;: &quot;@theatersoft/zwave&quot;,
+          &quot;export&quot;: &quot;ZWave&quot;,
+          &quot;name&quot;: &quot;ZWave&quot;,
+          &quot;config&quot;: {
+            &quot;port&quot;: &quot;/dev/ttyACM0&quot;,
+            &quot;options&quot;: {
+              &quot;Logging&quot;: true,
+              &quot;ConsoleOutput&quot;: true,
+              &quot;SaveLogLevel&quot;: 5
+            }
+          }
+        }
+</code></pre><p>…right after the existing object in <code>hosts[0].services[]</code>.</p>
+<p>Then reconfigure and redeploy:</p>
+<pre><code>npm run config deploy
+</code></pre><h3 id="8-test-a-zwave-device">8. Test a ZWave device</h3>
 </div></article></main></div>
 </body>
 </html>
