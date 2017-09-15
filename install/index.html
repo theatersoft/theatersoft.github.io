@@ -32,21 +32,19 @@
 </head>
 <body>
 <div><nav class="_nav_nav"><div><ul><a href="/"><img src="/images/theatersoft-logo-only.svg" /><li>Home</li></a><div><li><a href="/install">Install</a></li><li><a href="/solutions">Solutions</a></li><li><a target="_blank" href="https://github.com/theatersoft">GitHub</a></li></div><li class="_nav_toggle"><button><svg width="768" height="768" viewBox="0 0 768 768"><path d="M96 160h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4zM96 544h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4zM96 352h576q13.3 0 22.6 9.4t9.4 22.6-9.4 22.6-22.6 9.4h-576q-13.2 0-22.6-9.4t-9.4-22.6 9.4-22.6 22.6-9.4z"></path></svg></button></li></ul></div></nav><header class="_header_header"><div class="_header_image"></div><div class="_header_gradient"></div><div class="_header_content"></div></header><main class="_page_page"><article><div><h2 id="install-theatersoft-home-on-a-raspberry-pi-3">Install Theatersoft Home on a Raspberry Pi 3</h2>
-<p>Today I’ll walk through the steps to install Theatersoft Home on a Raspberry Pi 3. I’ll also connect a Z-Wave USB controller and include a couple of Z-Wave devices. When we finish we’ll have a working home automation hub that can be controlled from any browser, and you’ll be ready to build your own.</p>
-<h2 id="what-do-we-need-">What do we need?</h2>
-<p>Here’s my RPI3 inside a protective case:</p>
-<p class="ts-image"><img src="/images/blog/rpi3-install.png" alt="Install Theatersoft Home on a Raspberry Pi 3"></p>
+<p>Today I’ll walk through the steps to install Theatersoft Home on a Raspberry Pi 3. I’ll also connect a Z-Wave USB controller and include a couple of Z-Wave devices. When we finish we’ll have a custom home automation hub that can remotely control and monitor Z-Wave devices from any browser.</p>
+<h2 id="requirements">Requirements</h2>
+<p class="ts-image"><img src="/images/install-rpi3/rpi3.jpg" alt="Install Theatersoft Home on a Raspberry Pi 3"></p>
 
-<p>You’ll need:</p>
 <ul>
 <li>Raspberry Pi 3 Model B, (case optional)</li>
 <li>5V 2A power</li>
-<li>ethernet network (or WiFi, but I’ll skip that for now)</li>
+<li>ethernet network (or WiFi, not covered here)</li>
 <li>microSD card</li>
-<li>Z-Wave controller (SIGMA ACC-UZB3-U-STA)</li>
+<li>USB Z-Wave controller 908Mhz US frequency (SIGMA ACC-UZB3-U-STA or Aeotec Z-Stick Gen5)</li>
 </ul>
-<p>You should also have a domain name that you’ll use to host the web app. The domain name will let us set up dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and automatic HTTPS certificates. You could skip this, but then you’d need to connect to your current IP address and override invalid certificate warnings from browsers.</p>
-<p>Let’s say my domain is <code>example.com</code> and registered with Namecheap.com. The instructions may be slightly different for other registrars. I’m using Linux on my PC, so you may need to perform the equivalent steps for a different OS.</p>
+<p>You’ll use a host PC to prepare the boot microSD card and connect to the RPI. My instructions assume a Linux PC, so you will need to perform equivalent steps for a different OS.</p>
+<p>You should have a domain name to use as the address for the Theatersoft Client web app. The domain name allows dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and is required for automatic HTTPS certificate renewal via LetsEncrypt. If you skip this, you’ll need to connect to your current IP address and override invalid certificate warnings from your browser.</p>
 <h2 id="start-installing">Start installing</h2>
 <h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
 <p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian Stretch Lite</a> image zip file. We’ll only use the Lite image because we have no use for the full desktop.</p>
@@ -153,7 +151,7 @@ home
 <h3 id="6-pair-theatersoft-client">6. Pair Theatersoft Client</h3>
 <p>Open the Theatersoft Client app in your browser, e.g. <code>https://home.example.com</code> (or <code>https://raspberrypi.local</code> if testing without a domain name).</p>
 <p>This is the pinpad login screen, which appears when your browser doesn’t have a valid session cookie. Click the lock icon to pair with the default password <code>0000</code>. (You can change the default in <code>config.json</code>.) You are now connected and see a default black background since you have no camera feeds configured.</p>
-<p class="ts-image"><img src="/images/blog/pinpad-screenshot.png" alt="Theatersoft Pinpad screenshot"></p>
+<p class="ts-image"><img src="/images/install-rpi3/screenshot-pinpad.png" alt="Theatersoft Pinpad screenshot"></p>
 
 <blockquote>
 <p>Click (or tap - the client is fully touch enabled) near the center of the page to activate the tapmenu, and click the top status icon.</p>
