@@ -123,11 +123,11 @@ em {
   z-index: 1000;
   position: fixed;
   top: 0;
-  height: 48px;
   width: 100%;
   font-size: 18px;
 }
 ._nav_nav ul {
+  height: 52px;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
