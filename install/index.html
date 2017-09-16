@@ -50,16 +50,16 @@
 <p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">RASPBIAN STRETCH LITE</a> (not DESKTOP) image zip file.</p>
 <p>Insert the microSD into your PC card reader and note the device name in <code>gnome-disks</code>.</p>
 <p>Unzip the image to the microSD (as <em>root</em> - be sure to replace X with the correct device name):</p>
-<pre><code>sudo -i
-zcat 2017-09-07-raspbian-stretch-lite.zip &gt; /dev/sdX
+<pre><code><span class="token function">sudo</span> -i
+zcat 2017-09-07-raspbian-stretch-lite.zip <span class="token operator">></span> /dev/sdX
 </code></pre><p>Mount the boot partition in <code>gnome-disks</code> and create a file named <code>ssh</code> at the root of that partition:</p>
-<pre><code>touch /media/$USER/boot/ssh
+<pre><code><span class="token function">touch</span> /media/<span class="token variable">$USER</span>/boot/ssh
 </code></pre><p>Unmount and remove the microSD card.</p>
 <h3 id="2-boot-the-pi-and-set-up-ssh">2. Boot the Pi and set up SSH</h3>
 <p>Insert the microSD card into the Pi and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
 <p>Since the Pi is running Avahi, connect with <code>ssh pi@raspberrypi.local</code> (the password is raspberry). If that doesn’t work, you will need to find the Pi’s IP address. You can check your router’s admin page or use <code>nmap</code> if available, e.g. <code>nmap -sn 192.168.1.0/24 | grep pi</code>.</p>
 <p>Update your local ssh config so you can simply use <code>pi</code> as the host:</p>
-<pre><code>cat &lt;&lt; EOF &gt;&gt; ~/.ssh/config
+<pre><code><span class="token function">cat</span> <span class="token operator">&lt;&lt;</span> EOF <span class="token operator">>></span> ~/.ssh/config
 Host pi
 Hostname raspberrypi.local
 User pi
@@ -67,49 +67,49 @@ EOF
 </code></pre><p>Secure the Pi by using ssh key authentication:</p>
 <pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi
 </code></pre><p>And disable ssh password authentication on the Pi (<code>ssh pi</code>):</p>
-<pre><code>sudo sed -i &#39;s|#PasswordAuthentication yes|PasswordAuthentication no|&#39; /etc/ssh/sshd_config
+<pre><code><span class="token function">sudo</span> <span class="token function">sed</span> -i <span class="token string">'s|#PasswordAuthentication yes|PasswordAuthentication no|'</span> /etc/ssh/sshd_config
 </code></pre><h3 id="3-install-node-js">3. Install Node.js</h3>
 <p>The version of node in the raspbian repository is too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
-<pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
+<pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh <span class="token operator">|</span> <span class="token function">bash</span>
 </code></pre><p>Close and reopen your ssh terminal, then install node 8:</p>
-<pre><code>nvm install 8
+<pre><code>nvm <span class="token function">install</span> 8
 </code></pre><p>Now <code>which node</code> will return something like <code>/home/pi/.nvm/versions/node/v8.5.0/bin/node</code> but the Theatersoft Home systemd service requires <code>node</code> and <code>npm</code> to be in <code>/usr/local/bin</code>. You’ll need to symlink them:</p>
-<pre><code>n=$(which node); n=${n%/node}
-sudo ln -sf $n/node /usr/local/bin/node
-sudo ln -sf $n/npm /usr/local/bin/npm
+<pre><code>n<span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">which</span> node<span class="token variable">)</span></span><span class="token punctuation">;</span> n<span class="token operator">=</span><span class="token variable">${n%/node}</span>
+<span class="token function">sudo</span> <span class="token function">ln</span> -sf <span class="token variable">$n</span>/node /usr/local/bin/node
+<span class="token function">sudo</span> <span class="token function">ln</span> -sf <span class="token variable">$n</span>/npm /usr/local/bin/npm
 </code></pre><h3 id="4-install-theatersoft-home">4. Install Theatersoft Home</h3>
 <p>Create a directory where you’ll create your Theatersoft configuration (I suggest you name it the same as your domain name). Then install, configure, and deploy <code>Home</code>:</p>
-<pre><code>mkdir example &amp;&amp; cd example &amp;&amp; npm install @theatersoft/home
-npm explore @theatersoft/home npm run config
-npm run deploy
+<pre><code><span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
+<span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config
+<span class="token function">npm</span> run deploy
 </code></pre><p>Theatersoft is now running on port 443 (but you cannot connect a browser until we configure the SSL certificate):</p>
 <pre><code>pi@raspberrypi:~ $ systemctl status theatersoft
 ● theatersoft.service - Theatersoft server
-   Loaded: loaded (/etc/systemd/system/theatersoft.service; enabled; vendor preset: enabled)
-   Active: active (running) since Thu 2017-09-14 03:39:55 UTC; 15min ago
- Main PID: 22385 (node)
+   Loaded: loaded <span class="token punctuation">(</span>/etc/systemd/system/theatersoft.service<span class="token punctuation">;</span> enabled<span class="token punctuation">;</span> vendor preset: enabled<span class="token punctuation">)</span>
+   Active: active <span class="token punctuation">(</span>running<span class="token punctuation">)</span> since Thu 2017-09-14 03:39:55 UTC<span class="token punctuation">;</span> 15min ago
+ Main PID: 22385 <span class="token punctuation">(</span>node<span class="token punctuation">)</span>
    CGroup: /system.slice/theatersoft.service
            └─22385 /usr/local/bin/node server.js
 
-Sep 14 03:39:55 raspberrypi systemd[1]: Started Theatersoft server.
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft { parent: undefined, children: { server: Promise { &lt;pending&gt;
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Bus name is /
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Config raspberrypi { _letsencrypt: { domain: &#39;example.com&#39;, e
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft starting Session undefined
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Client /opt/theatersoft/node_modules/@theatersoft/client
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Listening on port 443
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Starting service Device
-Sep 14 03:39:57 raspberrypi authbind[22385]: Theatersoft Started service Device
+Sep 14 03:39:55 raspberrypi systemd<span class="token punctuation">[</span>1<span class="token punctuation">]</span>: Started Theatersoft server.
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft <span class="token punctuation">{</span> parent: undefined, children: <span class="token punctuation">{</span> server: Promise <span class="token punctuation">{</span> <span class="token operator">&lt;</span>pending<span class="token operator">></span>
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Bus name is /
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Config raspberrypi <span class="token punctuation">{</span> _letsencrypt: <span class="token punctuation">{</span> domain: <span class="token string">'example.com'</span>, e
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft starting Session undefined
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Client /opt/theatersoft/node_modules/@theatersoft/client
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Listening on port 443
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Starting <span class="token function">service</span> Device
+Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Started <span class="token function">service</span> Device
 </code></pre><blockquote>
 <p>I noticed at this point I couldn’t control my service e.g. <code>systemctl restart theatersoft</code> with user <code>pi</code>:</p>
 <pre><code>Failed to restart theatersoft.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files
 </code></pre><p>Is normal for Raspbian? Though it works as <code>root</code>, I’m used to using a nonroot user. So to fix it:</p>
-<pre><code>sudo apt install policykit-1
+<pre><code><span class="token function">sudo</span> apt <span class="token function">install</span> policykit-1
 </code></pre><p>Then to fix policykit authentication requesting <code>root</code> instead of <code>pi</code> password:</p>
-<pre><code>sudo -i
-cat &lt;&lt; EOF &gt;&gt; /etc/polkit-1/localauthority.conf.d/51-admin.conf
-[Configuration]
-AdminIdentities=unix-group:sudo
+<pre><code><span class="token function">sudo</span> -i
+<span class="token function">cat</span> <span class="token operator">&lt;&lt;</span> EOF <span class="token operator">>></span> /etc/polkit-1/localauthority.conf.d/51-admin.conf
+<span class="token punctuation">[</span>Configuration<span class="token punctuation">]</span>
+AdminIdentities<span class="token operator">=</span>unix-group:sudo
 EOF
 systemctl restart polkit.service
 </code></pre></blockquote>
@@ -117,32 +117,32 @@ systemctl restart polkit.service
 <blockquote>
 <p>RECOMMENDED FOR TESTING ONLY</p>
 <p>You can create a self-signed certificate instead of configuring a domain name:</p>
-<pre><code>cd /opt/theatersoft/.config/theatersoft
+<pre><code><span class="token function">cd</span> /opt/theatersoft/.config/theatersoft
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.cer -days 365 -nodes
 </code></pre><p>Accept the defaults when prompted. Skip to <em>Restart the Theatersoft server</em>.</p>
 </blockquote>
 <p>Install ddclient:</p>
-<pre><code>sudo apt install ddclient
+<pre><code><span class="token function">sudo</span> apt <span class="token function">install</span> ddclient
 </code></pre><p>For a domain registered at <code>namecheap.com</code>, refer to <a href="https://www.namecheap.com/support/knowledgebase/article.aspx/583/11/how-do-i-configure-ddclient">How do I configure DDClient?</a> to answer the installation prompts and edit the configuration in <code>/etc/ddclient.conf</code>. Otherwise, find a similar guide for your registrar.</p>
-<pre><code># Configuration file for ddclient generated by debconf
-#
-# /etc/ddclient.conf
+<pre><code><span class="token comment" spellcheck="true"># Configuration file for ddclient generated by debconf</span>
+<span class="token comment" spellcheck="true">#</span>
+<span class="token comment" spellcheck="true"># /etc/ddclient.conf</span>
 
-use=web, web=dynamicdns.park-your-domain.com/getip
-protocol=namecheap
-server=dynamicdns.park-your-domain.com
-login=example.com
-password=&lt;not shown&gt;
+use<span class="token operator">=</span>web, web<span class="token operator">=</span>dynamicdns.park-your-domain.com/getip
+protocol<span class="token operator">=</span>namecheap
+server<span class="token operator">=</span>dynamicdns.park-your-domain.com
+login<span class="token operator">=</span>example.com
+password<span class="token operator">=</span><span class="token operator">&lt;</span>not shown<span class="token operator">></span>
 home
 </code></pre><p>This will automatically update the nameserver for <code>home.example.com</code>. We can see if it worked by checking the end of the system log: <code>journalctl -e</code>:</p>
-<pre><code>Sep 14 20:48:01 raspberrypi ddclient[26501]: SUCCESS:  updating home: good: IP address set to 50.35.xx.xx
+<pre><code>Sep 14 20:48:01 raspberrypi ddclient<span class="token punctuation">[</span>26501<span class="token punctuation">]</span>: SUCCESS:  updating home: good: IP address <span class="token keyword">set</span> to 50.35.xx.xx
 </code></pre><p>Forward port 443 from the internet to your internal Pi IP address in your network router settings. This process will vary depending on your router.</p>
 <p>You’re ready to enable letsencypt in <code>config.json</code>. Remove the underscore from  the <code>_letsencrypt</code> property name and provide your values for <code>domain</code> and <code>email</code>.</p>
-<pre><code>  &quot;letsencrypt&quot;: {
-    &quot;domain&quot;: &quot;home.example.com&quot;,
-    &quot;email&quot;: &quot;name@example.com&quot;,
-    &quot;production&quot;: true
-  },
+<pre><code>  <span class="token string">"letsencrypt"</span><span class="token keyword">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"domain"</span><span class="token keyword">:</span> <span class="token string">"home.example.com"</span>,
+    <span class="token string">"email"</span><span class="token keyword">:</span> <span class="token string">"name@example.com"</span>,
+    <span class="token string">"production"</span><span class="token keyword">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span>,
 </code></pre><p>Restart the Theatersoft server: <code>systemctl restart theatersoft</code>.</p>
 <h3 id="6-pair-theatersoft-client">6. Pair Theatersoft Client</h3>
 <p>Open the Theatersoft Client app in your browser, e.g. <code>https://home.example.com</code> (or <code>https://raspberrypi.local</code> if testing without a domain name).</p>
@@ -155,32 +155,32 @@ home
 <p>Before continuing, open the top status screen. Turn off the <code>Enable pairing</code> switch. Pairing should normally be disabled to block brute force attacks. Turn on <code>Enable notifications</code> to receive web push notifications including failed pairing attempts and new paired connections.</p>
 <h3 id="7-install-zwave">7. Install ZWave</h3>
 <p>Build the OpenZWave project, which is a dependency of the ZWave service:</p>
-<pre><code>cd ~/
-wget https://github.com/OpenZWave/open-zwave/archive/v1.4.zip
+<pre><code><span class="token function">cd</span> ~/
+<span class="token function">wget</span> https://github.com/OpenZWave/open-zwave/archive/v1.4.zip
 unzip v1.4.zip 
-cd open-zwave-1.4
-sudo apt install libudev-dev git-core
-make
-sudo make install
-sudo mv /usr/local/lib/arm-linux-gnueabihf/libopenzwave.so* /usr/lib/arm-linux-gnueabihf/
+<span class="token function">cd</span> open-zwave-1.4
+<span class="token function">sudo</span> apt <span class="token function">install</span> libudev-dev git-core
+<span class="token function">make</span>
+<span class="token function">sudo</span> <span class="token function">make</span> <span class="token function">install</span>
+<span class="token function">sudo</span> <span class="token function">mv</span> /usr/local/lib/arm-linux-gnueabihf/libopenzwave.so* /usr/lib/arm-linux-gnueabihf/
 </code></pre><p>Add the ZWave service with <code>nano ~/example/config.json</code>. Insert the following object after the existing Device service:</p>
 <pre><code>        ,
-        {
-          &quot;enabled&quot;: true,
-          &quot;module&quot;: &quot;@theatersoft/zwave&quot;,
-          &quot;export&quot;: &quot;ZWave&quot;,
-          &quot;name&quot;: &quot;ZWave&quot;,
-          &quot;config&quot;: {
-            &quot;port&quot;: &quot;/dev/ttyACM0&quot;,
-            &quot;options&quot;: {
-              &quot;Logging&quot;: true,
-              &quot;ConsoleOutput&quot;: true,
-              &quot;SaveLogLevel&quot;: 5
-            }
-          }
-        }
+        <span class="token punctuation">{</span>
+          <span class="token string">"enabled"</span><span class="token keyword">:</span> true,
+          <span class="token string">"module"</span><span class="token keyword">:</span> <span class="token string">"@theatersoft/zwave"</span>,
+          <span class="token string">"export"</span><span class="token keyword">:</span> <span class="token string">"ZWave"</span>,
+          <span class="token string">"name"</span><span class="token keyword">:</span> <span class="token string">"ZWave"</span>,
+          <span class="token string">"config"</span><span class="token keyword">:</span> <span class="token punctuation">{</span>
+            <span class="token string">"port"</span><span class="token keyword">:</span> <span class="token string">"/dev/ttyACM0"</span>,
+            <span class="token string">"options"</span><span class="token keyword">:</span> <span class="token punctuation">{</span>
+              <span class="token string">"Logging"</span><span class="token keyword">:</span> true,
+              <span class="token string">"ConsoleOutput"</span><span class="token keyword">:</span> true,
+              <span class="token string">"SaveLogLevel"</span><span class="token keyword">:</span> 5
+            <span class="token punctuation">}</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
 </code></pre><p>Then reconfigure and redeploy. This performs all installation and restarts the server.</p>
-<pre><code>npm run config deploy
+<pre><code><span class="token function">npm</span> run config deploy
 </code></pre><p>The ZWave service is now started and the client shows ZWave in the Services Settings (tap, left tap, Services):</p>
 <p class="page-image"><img src="/images/install-rpi3/settings.png" alt="Theatersoft Service Settings"></p>
 
