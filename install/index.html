@@ -47,36 +47,33 @@
 <p>You should have a domain name to use as the address for the Theatersoft Client web app. The domain name allows dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and is required for automatic HTTPS certificate renewal via LetsEncrypt. If you skip this, you’ll need to connect to your current IP address and override invalid certificate warnings from your browser.</p>
 <h2 id="start-installing">Start installing</h2>
 <h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
-<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspbian Stretch Lite</a> image zip file. We’ll only use the Lite image because we have no use for the full desktop.</p>
+<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">RASPBIAN STRETCH LITE</a> (not DESKTOP) image zip file.</p>
 <p>Insert the microSD into your PC card reader and note the device name in <code>gnome-disks</code>.</p>
-<p>Unzip the image to the microSD (as <strong>root</strong> - replace X with the correct device name):</p>
-<pre><code>zcat 2017-09-07-raspbian-stretch-lite.zip &gt; /dev/sdX
-</code></pre><p>Mount the boot partition in <code>gnome-disks</code>. Then create a file named <code>ssh</code> (replace X with your user name):</p>
-<pre><code>touch /media/user/boot/ssh
+<p>Unzip the image to the microSD (as <em>root</em> - be sure to replace X with the correct device name):</p>
+<pre><code>sudo -i
+zcat 2017-09-07-raspbian-stretch-lite.zip &gt; /dev/sdX
+</code></pre><p>Mount the boot partition in <code>gnome-disks</code> and create a file named <code>ssh</code> at the root of that partition:</p>
+<pre><code>touch /media/$USER/boot/ssh
 </code></pre><p>Unmount and remove the microSD card.</p>
 <h3 id="2-boot-the-rpi-and-set-up-ssh">2. Boot the RPI and set up SSH</h3>
 <p>Insert the microSD card in the RPI and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
-<p>You may need to find the RPI’s ip address. You can check your router’s admin page or:</p>
-<pre><code>nmap -sn 192.168.1.0/24 | grep pi
-Nmap scan report for pi (192.168.1.91)
-</code></pre><p>Since the RPI is running Avahi, I’ll connect using <code>ssh pi@raspberrypi.local</code>, or use your own ip address (the password is raspberry).</p>
-<blockquote>
-<p>Secure the RPI by configuring key authentication and disabling password authentication:</p>
+<p>Since the RPI is running Avahi, connect with <code>ssh pi@raspberrypi.local</code> (the password is raspberry). If that doesn’t work, you will need to find the RPI’s IP address. You can check your router’s admin page or use <code>nmap</code> if available, e.g. <code>nmap -sn 192.168.1.0/24 | grep pi</code>.</p>
+<p>Secure the RPI by configuring ssh key authentication:</p>
 <pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi@raspberrypi.local
-</code></pre><p>Then update your ssh config:</p>
+</code></pre><p>Update your ssh config:</p>
 <pre><code>cat &lt;&lt; EOF &gt;&gt; ~/.ssh/config
 Host pi
 Hostname raspberrypi.local
 User pi
 EOF
-</code></pre><p>Then <code>ssh pi</code> and disable ssh password authentication on the RPI:</p>
-<pre><code>sudo nano /etc/ssh/sshd_config
+</code></pre><p>And disable ssh password authentication on the RPI:</p>
+<pre><code>ssh pi
+sudo nano /etc/ssh/sshd_config
 </code></pre><p>Change <code>#PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code> then exit and save.</p>
-</blockquote>
 <h3 id="3-install-node-js">3. Install Node.js</h3>
-<p>If we installed node from the raspbian repository we’d only get v4.8.2. That’s too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
+<p>The version of node in the raspbian repository is too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
 <pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
-</code></pre><p>Close and reopen your ssh terminal. Then install node 8:</p>
+</code></pre><p>Close and reopen your ssh terminal, then install node 8:</p>
 <pre><code>nvm install 8
 </code></pre><p>Now <code>which node</code> will return something like <code>/home/pi/.nvm/versions/node/v8.5.0/bin/node</code> but the Theatersoft Home systemd service requires <code>node</code> and <code>npm</code> to be in <code>/usr/local/bin</code>. You’ll need to symlink them:</p>
 <pre><code>n=$(which node); n=${n%/node}
@@ -87,7 +84,7 @@ sudo ln -sf $n/npm /usr/local/bin/npm
 <pre><code>mkdir example &amp;&amp; cd example &amp;&amp; npm install @theatersoft/home
 npm explore @theatersoft/home npm run config
 npm run deploy
-</code></pre><p>Theatersoft is now running on port 443 (but you cannot connect with your browser until we configure a SSL certificate in the next step):</p>
+</code></pre><p>Theatersoft is now running on port 443 (but you cannot connect a browser until we configure the SSL certificate):</p>
 <pre><code>pi@raspberrypi:~ $ systemctl status theatersoft
 ● theatersoft.service - Theatersoft server
    Loaded: loaded (/etc/systemd/system/theatersoft.service; enabled; vendor preset: enabled)
@@ -120,14 +117,15 @@ systemctl restart polkit.service
 </code></pre></blockquote>
 <h3 id="5-setup-ddclient-and-configure-domain-name">5. Setup ddclient and configure domain name</h3>
 <blockquote>
-<p>RECOMMENDED FOR TESTING ONLY:</p>
-<p>You can create a self-signed certificate instead of configuring a domain name (accept all the defaults prompted from openssl):</p>
+<p>RECOMMENDED FOR TESTING ONLY</p>
+<p>You can create a self-signed certificate instead of configuring a domain name:</p>
 <pre><code>cd /opt/theatersoft/.config/theatersoft
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.cer -days 365 -nodes
-</code></pre></blockquote>
+</code></pre><p>Accept the defaults when prompted. Skip to <em>Restart the Theatersoft server</em>.</p>
+</blockquote>
 <p>Install ddclient:</p>
 <pre><code>sudo apt install ddclient
-</code></pre><p>If your domain registrar is <code>namecheap.com</code>, refer to <a href="https://www.namecheap.com/support/knowledgebase/article.aspx/583/11/how-do-i-configure-ddclient">How do I configure DDClient?</a> to answer the installation prompts and edit the configuration in <code>/etc/ddclient.conf</code>. Otherwise, find a similar guide from your registrar.</p>
+</code></pre><p>For a domain registered at <code>namecheap.com</code>, refer to <a href="https://www.namecheap.com/support/knowledgebase/article.aspx/583/11/how-do-i-configure-ddclient">How do I configure DDClient?</a> to answer the installation prompts and edit the configuration in <code>/etc/ddclient.conf</code>. Otherwise, find a similar guide for your registrar.</p>
 <pre><code># Configuration file for ddclient generated by debconf
 #
 # /etc/ddclient.conf
@@ -138,22 +136,22 @@ server=dynamicdns.park-your-domain.com
 login=example.com
 password=&lt;not shown&gt;
 home
-</code></pre><p>This should update the nameserver for <code>home.example.com</code>. We can see if it worked by checking the end of the system log with <code>journalctl -e</code>:</p>
+</code></pre><p>This will automatically update the nameserver for <code>home.example.com</code>. We can see if it worked by checking the end of the system log: <code>journalctl -e</code>:</p>
 <pre><code>Sep 14 20:48:01 raspberrypi ddclient[26501]: SUCCESS:  updating home: good: IP address set to 50.35.xx.xx
-</code></pre><p>Next, forward port 443 from the internet to your internal RPI IP address in your network router settings. This process will vary depending on your router.</p>
-<p>Now you’re ready to enable letsencypt in <code>config.json</code>. Remove the underscore from  the <code>_letsencrypt</code> property name and provide your values for <code>domain</code> and <code>email</code>.</p>
+</code></pre><p>Forward port 443 from the internet to your internal RPI IP address in your network router settings. This process will vary depending on your router.</p>
+<p>You’re ready to enable letsencypt in <code>config.json</code>. Remove the underscore from  the <code>_letsencrypt</code> property name and provide your values for <code>domain</code> and <code>email</code>.</p>
 <pre><code>  &quot;letsencrypt&quot;: {
     &quot;domain&quot;: &quot;home.example.com&quot;,
     &quot;email&quot;: &quot;name@example.com&quot;,
     &quot;production&quot;: true
   },
-</code></pre><p>Restart the Theatersoft server <code>systemctl restart theatersoft</code>.</p>
+</code></pre><p>Restart the Theatersoft server: <code>systemctl restart theatersoft</code>.</p>
 <h3 id="6-pair-theatersoft-client">6. Pair Theatersoft Client</h3>
 <p>Open the Theatersoft Client app in your browser, e.g. <code>https://home.example.com</code> (or <code>https://raspberrypi.local</code> if testing without a domain name).</p>
 <p class="page-image"><img src="/images/install-rpi3/pinpad.png" alt="Theatersoft Pinpad"></p>
 
-<p>This is the pinpad login screen, which appears when your browser doesn’t have a valid session cookie. Click the lock icon to pair with the default password <code>0000</code>. (You can change the default in <code>config.json</code>.) You are now connected and see a default black background since you have no camera feeds configured.</p>
-<p>Click (or tap - the client is fully touch enabled) near the center of the page to activate the tapmenu. This is the launching point for all of the Theatersoft UI. Since the tapmenu is sensitive to the relative position of two taps it’s easy to use without even looking at the screen. Try tapping as fast as your device can handle!</p>
+<p>This is the pinpad login screen, which appears when your browser doesn’t have a valid session cookie. Click the lock icon to pair with the default password <code>0000</code>. (You can change the password in <code>config.json</code>.) You are now connected and see a default black background since you have no camera feeds configured.</p>
+<p>Click (or tap - the client is fully touch enabled) near the center of the page to activate the tapmenu. This is the launching point for the Theatersoft UI. Since the tapmenu is sensitive to the relative position of two taps it’s easy to use without even looking at the screen. Try tapping as fast as your device can handle!</p>
 <p class="page-image"><img src="/images/install-rpi3/tapmenu.png" alt="Theatersoft Tapmenu"></p>
 
 <p>Before continuing, open the top status screen. Turn off the <code>Enable pairing</code> switch. Pairing should normally be disabled to block brute force attacks. Turn on <code>Enable notifications</code> to receive web push notifications including failed pairing attempts and new paired connections.</p>
