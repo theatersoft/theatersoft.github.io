@@ -192,11 +192,14 @@ sudo mv /usr/local/lib/arm-linux-gnueabihf/libopenzwave.so* /usr/lib/arm-linux-g
 <p>Open ZWave service settings and turn on Add Device:</p>
 <p class="ts-image"><img src="/images/install-rpi3/zwave-settings.png" alt="Theatersoft ZWave Service Settings"></p>
 
-<p>The controller is now in <em>inclusion</em> mode, ready to add new Z-Wave devices. Check your device to learn how to trigger include/exclude. I’ve added a Zooz chime device which is appears a as a switch in the devices list (tap, right tap, Switch). Tapping the switch control turns on the chime.</p>
+<p>The controller is now in <em>inclusion</em> mode, ready to add new Z-Wave devices. Check your device to learn how to trigger include/exclude. The Zooz chime device that I’ve added required a triple press of the button inside the battery compartment. Look for the new switch in the devices list (tap, right tap, Switch).</p>
 <p class="ts-image"><img src="/images/install-rpi3/zwave-switch.png" alt="Theatersoft ZWave Switch"></p>
 
-<p>For device settings and ZWave device settings tap elsewhere on the list item. The name setting is currently readonly in the UI but you can override it in <code>/opt/theatersoft/.config/theatersoft/zwave.config.json</code>.</p>
+<p>For general device settings and ZWave device settings tap elsewhere on the list item. The name setting is currently readonly in the UI but you can override it in <code>/opt/theatersoft/.config/theatersoft/zwave.config.json</code>.</p>
 <p class="ts-image"><img src="/images/install-rpi3/device-settings.png" alt="Theatersoft ZWave Device Settings"></p>
+
+<h2 id="next-steps">Next steps</h2>
+<p>Find more Theatersoft packages on <a href="https://www.npmjs.com/~theatersoft">NPM</a> and <a href="https://github.com/theatersoft">Github</a>.</p>
 </div></article></main></div>
 </body>
 </html>
