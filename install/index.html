@@ -43,7 +43,7 @@
 <li>microSD card</li>
 <li>USB Z-Wave controller 908Mhz US frequency (SIGMA ACC-UZB3-U-STA or Aeotec Z-Stick Gen5)</li>
 </ul>
-<p>You’ll use a host PC to prepare the boot microSD card and connect to the RPI. My instructions assume a Linux PC, so you will need to perform equivalent steps for a different OS.</p>
+<p>You’ll use a host PC to prepare the boot microSD card and connect to the Pi. My instructions assume a Linux PC, so you will need to perform equivalent steps for a different OS.</p>
 <p>You should have a domain name to use as the address for the Theatersoft Client web app. The domain name allows dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and is required for automatic HTTPS certificate renewal via LetsEncrypt. If you skip this, you’ll need to connect to your current IP address and override invalid certificate warnings from your browser.</p>
 <h2 id="start-installing">Start installing</h2>
 <h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
@@ -55,22 +55,20 @@ zcat 2017-09-07-raspbian-stretch-lite.zip &gt; /dev/sdX
 </code></pre><p>Mount the boot partition in <code>gnome-disks</code> and create a file named <code>ssh</code> at the root of that partition:</p>
 <pre><code>touch /media/$USER/boot/ssh
 </code></pre><p>Unmount and remove the microSD card.</p>
-<h3 id="2-boot-the-rpi-and-set-up-ssh">2. Boot the RPI and set up SSH</h3>
-<p>Insert the microSD card in the RPI and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
-<p>Since the RPI is running Avahi, connect with <code>ssh pi@raspberrypi.local</code> (the password is raspberry). If that doesn’t work, you will need to find the RPI’s IP address. You can check your router’s admin page or use <code>nmap</code> if available, e.g. <code>nmap -sn 192.168.1.0/24 | grep pi</code>.</p>
-<p>Secure the RPI by configuring ssh key authentication:</p>
-<pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi@raspberrypi.local
-</code></pre><p>Update your ssh config:</p>
+<h3 id="2-boot-the-pi-and-set-up-ssh">2. Boot the Pi and set up SSH</h3>
+<p>Insert the microSD card into the Pi and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
+<p>Since the Pi is running Avahi, connect with <code>ssh pi@raspberrypi.local</code> (the password is raspberry). If that doesn’t work, you will need to find the Pi’s IP address. You can check your router’s admin page or use <code>nmap</code> if available, e.g. <code>nmap -sn 192.168.1.0/24 | grep pi</code>.</p>
+<p>Update your local ssh config so you can simply use <code>pi</code> as the host:</p>
 <pre><code>cat &lt;&lt; EOF &gt;&gt; ~/.ssh/config
 Host pi
 Hostname raspberrypi.local
 User pi
 EOF
-</code></pre><p>And disable ssh password authentication on the RPI:</p>
-<pre><code>ssh pi
-sudo nano /etc/ssh/sshd_config
-</code></pre><p>Change <code>#PasswordAuthentication yes</code> to <code>PasswordAuthentication no</code> then exit and save.</p>
-<h3 id="3-install-node-js">3. Install Node.js</h3>
+</code></pre><p>Secure the Pi by using ssh key authentication:</p>
+<pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi
+</code></pre><p>And disable ssh password authentication on the Pi (<code>ssh pi</code>):</p>
+<pre><code>sudo sed -i &#39;s|#PasswordAuthentication yes|PasswordAuthentication no|&#39; /etc/ssh/sshd_config
+</code></pre><h3 id="3-install-node-js">3. Install Node.js</h3>
 <p>The version of node in the raspbian repository is too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
 <pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh | bash
 </code></pre><p>Close and reopen your ssh terminal, then install node 8:</p>
@@ -138,7 +136,7 @@ password=&lt;not shown&gt;
 home
 </code></pre><p>This will automatically update the nameserver for <code>home.example.com</code>. We can see if it worked by checking the end of the system log: <code>journalctl -e</code>:</p>
 <pre><code>Sep 14 20:48:01 raspberrypi ddclient[26501]: SUCCESS:  updating home: good: IP address set to 50.35.xx.xx
-</code></pre><p>Forward port 443 from the internet to your internal RPI IP address in your network router settings. This process will vary depending on your router.</p>
+</code></pre><p>Forward port 443 from the internet to your internal Pi IP address in your network router settings. This process will vary depending on your router.</p>
 <p>You’re ready to enable letsencypt in <code>config.json</code>. Remove the underscore from  the <code>_letsencrypt</code> property name and provide your values for <code>domain</code> and <code>email</code>.</p>
 <pre><code>  &quot;letsencrypt&quot;: {
     &quot;domain&quot;: &quot;home.example.com&quot;,
