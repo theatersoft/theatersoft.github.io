@@ -208,7 +208,6 @@ nav {
   top: 0;
   width: 100%;
   font-size: 18px;
-  font-weight: 200;
 }
 nav ul {
   height: 52px;
@@ -246,7 +245,7 @@ nav ul a li {
     position: absolute;
     background-color: rgba(43,44,46,0.95);
     width: 300px;
-    line-height: 50px;
+    line-height: 52px;
   }
 }
 li {
@@ -264,6 +263,7 @@ li a {
   margin: 0 5px;
   padding: 0 10px;
   text-decoration: none;
+  line-height: 52px;
 }
 li a:hover {
   color: #1d1f21;
