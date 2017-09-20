@@ -276,13 +276,12 @@ nav ul a li {
 #_nav_icon {
   padding: 10px;
   cursor: pointer;
-  color: #fff;
-  width: 32px;
-  height: 32px;
   display: none;
 }
 #_nav_icon svg {
-  fill: currentColor;
+  fill: #fff;
+  width: 32px;
+  height: 32px;
 }
 @media (max-width: 700px) {
   #_nav_icon {
