@@ -212,6 +212,27 @@ nav {
 nav svg {
   fill: currentColor;
 }
+nav li {
+  list-style-type: none;
+  user-select: none;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1.25px;
+  font-size: 18px;
+}
+nav li a {
+  cursor: pointer;
+  color: #fff;
+  display: block;
+  margin: 0 5px;
+  padding: 0 10px;
+  text-decoration: none;
+  line-height: 52px;
+}
+nav li a:hover {
+  color: #1d1f21;
+  background-color: #fc0;
+}
 nav ul {
   height: 52px;
   display: flex;
@@ -251,27 +272,6 @@ nav ul a li {
     width: 300px;
     line-height: 52px;
   }
-}
-li {
-  list-style-type: none;
-  user-select: none;
-  color: #fff;
-  text-transform: uppercase;
-  letter-spacing: 1.25px;
-  font-size: 18px;
-}
-li a {
-  cursor: pointer;
-  color: #fff;
-  display: block;
-  margin: 0 5px;
-  padding: 0 10px;
-  text-decoration: none;
-  line-height: 52px;
-}
-li a:hover {
-  color: #1d1f21;
-  background-color: #fc0;
 }
 #_nav_icon {
   padding: 10px;
