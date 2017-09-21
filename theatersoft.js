@@ -1,19 +1,17 @@
 (function () {
 'use strict';
 
-var style = { "items": "_nav_items", "icon": "_nav_icon" };
+var style = { "items": "_nav_items", "toggle": "_nav_toggle" };
 
 const id = document.getElementById.bind(document);
 const items = id(style.items);
-const icon = id(style.icon);
-const use = icon.firstChild.firstChild;
 
-icon.addEventListener('click', e => {
+id(style.toggle).addEventListener('click', function (e) {
     e.preventDefault();
-    const expanded = icon.getAttribute('aria-expanded') === 'true';
-    icon.setAttribute('aria-expanded', !expanded);
+    const expanded = this.getAttribute('aria-expanded') === 'true';
+    this.setAttribute('aria-expanded', !expanded);
     items.setAttribute('aria-expanded', !expanded);
-    use.setAttribute('href', expanded ? '#svg-list' : '#svg-x');
+    this.firstChild.firstChild.setAttribute('href', expanded ? '#svg-list' : '#svg-x');
 }, true);
 
 }());

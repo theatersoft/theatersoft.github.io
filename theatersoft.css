@@ -94,7 +94,9 @@ h4,
 h5,
 h6,
 p,
-a {
+a,
+ul,
+li {
   margin: 0;
   padding: 0;
   border: 0;
@@ -208,56 +210,48 @@ nav {
   position: fixed;
   top: 0;
   width: 100%;
-}
-nav svg {
-  fill: currentColor;
+  height: 52px;
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin: 0;
+  padding: 0;
 }
 nav a {
   cursor: pointer;
   color: #fff;
   text-decoration: none;
   padding: 0 10px;
-}
-nav li {
-  list-style-type: none;
   user-select: none;
-  color: #fff;
   font-size: 18px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-}
-nav li > a {
-  display: block;
-  margin: 0 5px;
-  line-height: 52px;
-}
-nav li > a:hover {
-  color: #1d1f21;
-  background-color: #fc0;
-}
-nav > ul {
-  height: 52px;
-  display: flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  margin: 0;
-  padding: 0;
-}
-nav > ul > a {
   display: flex;
   align-items: center;
 }
-nav > ul > a > svg {
+nav > a > svg {
+  fill: #fc0;
   width: 52px;
   height: 45px;
 }
-nav > ul > a > li {
+nav > a > span {
   padding: 0 10px;
 }
 #_nav_items {
   display: flex;
+}
+#_nav_items > a {
+  margin-left: 10px;
+}
+#_nav_items > a:hover {
+  color: #1d1f21;
+  background-color: #fc0;
+}
+#_nav_items > a > svg {
+  width: 32px;
+  height: 32px;
+  fill: currentColor;
 }
 @media (max-width: 700px) {
   #_nav_items {
@@ -269,22 +263,32 @@ nav > ul > a > li {
     right: 0;
     position: absolute;
     background-color: rgba(43,44,46,0.95);
-    width: 300px;
+    width: 200px;
     line-height: 52px;
   }
+  #_nav_items[aria-expanded="true"] > a {
+    margin: 0;
+  }
+  #_nav_items[aria-expanded="true"] > a > svg {
+    padding: 10px 0;
+  }
 }
-#_nav_icon {
+#_nav_toggle {
   padding: 10px;
   cursor: pointer;
   display: none;
 }
-#_nav_icon > svg {
-  fill: #fff;
+#_nav_toggle > svg {
   width: 32px;
   height: 32px;
+  fill: #fff;
+}
+#_nav_toggle[aria-expanded="true"] > svg {
+  width: 30px;
+  height: 30px;
 }
 @media (max-width: 700px) {
-  #_nav_icon {
+  #_nav_toggle {
     display: inline-block;
   }
 }
