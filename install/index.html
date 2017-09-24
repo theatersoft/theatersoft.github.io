@@ -34,7 +34,7 @@
 <body>
 <svg display="none"><symbol id="svg-logo" viewBox="0 0 280 240"><path d="m132.7 21.94-100.5 58.06c-4.385 2.536-7.077 7.161-7.076 12.16v3.018 109.8c-.0029 7.791 6.424 14.11 14.36 14.11h64.73c7.932-.008 14.36-6.322 14.36-14.11v-25.11c10.5-5.275 17.85-15.91 17.85-28.16 0-17.37-14.63-31.75-32.31-31.75-17.68.00001-32.31 14.38-32.31 31.75 0 12.33 7.44 23.02 18.04 28.26v10.91h-35.99v-90.67l86.17-49.78 86.16 49.78v91.36l-35.8-.5008v-11.2c10.5-5.275 17.85-15.91 17.85-28.16 0-17.37-14.63-31.75-32.31-31.75s-32.31 14.38-32.31 31.75c0 12.33 7.44 23.02 18.04 28.26v25.01c-.005 7.718 6.307 14.01 14.16 14.11l64.51.8766c8.012.1153 14.57-6.231 14.57-14.1v-113.7c.00083-4.998-2.691-9.624-7.076-12.16l-100.6-58.1c-2.077-1.195-4.427-1.858-6.834-1.929-2.709-.0862-5.388.5824-7.726 1.929z"></path></symbol><symbol id="svg-github" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></symbol><symbol id="svg-list" viewBox="0 0 32 32"><path d="M25.6 14.4h-19.2c-0.883 0-1.6 0.717-1.6 1.6s0.717 1.6 1.6 1.6h19.2c0.885 0 1.6-0.717 1.6-1.6s-0.715-1.6-1.6-1.6zM6.4 11.2h19.2c0.885 0 1.6-0.717 1.6-1.6s-0.715-1.6-1.6-1.6h-19.2c-0.883 0-1.6 0.717-1.6 1.6s0.717 1.6 1.6 1.6zM25.6 20.8h-19.2c-0.883 0-1.6 0.715-1.6 1.6s0.717 1.6 1.6 1.6h19.2c0.885 0 1.6-0.715 1.6-1.6s-0.715-1.6-1.6-1.6z"></path></symbol><symbol id="svg-x" viewBox="0 0 12 16"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48z"></path></symbol></svg>
 <nav><a href="/"><svg><use href="#svg-logo"></use></svg><span>Home</span></a><ul id="_566"><a href="/install">Install</a><a href="/solutions">Solutions</a><a target="_blank" href="https://github.com/theatersoft"><svg><use href="#svg-github"></use></svg></a></ul><div id="_c62"><svg><use href="#svg-list"></use></svg></div></nav>
-<header class="_dc5"><div class="_e76"></div><div class="_720"></div><div class="_e95"><h1>Install Theatersoft Home on a Raspberry Pi 3</h1></div></header>
+<header><div class="_e76"></div><div class="_720"></div><div class="_e95"><h1>Install Theatersoft Home on a Raspberry Pi 3</h1></div></header>
 <main class="_485"><article><div><p>Today I’ll walk through the steps to install Theatersoft Home on a Raspberry Pi 3. I’ll also install a Z-Wave USB controller and connect it to a Z-Wave device. The end result is a custom home automation hub that can remotely control and monitor your Z-Wave devices from any browser.</p>
 <h2 id="requirements">Requirements</h2>
 <p class="page-image"><img src="/images/install-rpi3/rpi3.jpg" alt="Install Theatersoft Home on a Raspberry Pi 3"></p>
@@ -141,12 +141,13 @@ home
 <pre><code>Sep 14 20:48:01 raspberrypi ddclient<span class="token punctuation">[</span>26501<span class="token punctuation">]</span>: SUCCESS:  updating home: good: IP address <span class="token keyword">set</span> to 50.35.xx.xx
 </code></pre><p>Forward port 443 from the internet to your internal Pi IP address in your network router settings. This process will vary depending on your router.</p>
 <p>You’re ready to enable letsencypt in <code>config.json</code>. Remove the underscore from  the <code>_letsencrypt</code> property name and provide your values for <code>domain</code> and <code>email</code>.</p>
-<pre><code>  <span class="token string">"letsencrypt"</span><span class="token keyword">:</span> <span class="token punctuation">{</span>
-    <span class="token string">"domain"</span><span class="token keyword">:</span> <span class="token string">"home.example.com"</span>,
-    <span class="token string">"email"</span><span class="token keyword">:</span> <span class="token string">"name@example.com"</span>,
-    <span class="token string">"production"</span><span class="token keyword">:</span> <span class="token boolean">true</span>
-  <span class="token punctuation">}</span>,
-</code></pre><p>Restart the Theatersoft server: <code>systemctl restart theatersoft</code>.</p>
+<pre><code class="language-javascript">  <span class="token string">"letsencrypt"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+    <span class="token string">"domain"</span><span class="token punctuation">:</span> <span class="token string">"home.example.com"</span><span class="token punctuation">,</span>
+    <span class="token string">"email"</span><span class="token punctuation">:</span> <span class="token string">"name@example.com"</span><span class="token punctuation">,</span>
+    <span class="token string">"production"</span><span class="token punctuation">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+</code></pre>
+<p>Restart the Theatersoft server: <code>systemctl restart theatersoft</code>.</p>
 <h3 id="6-pair-theatersoft-client">6. Pair Theatersoft Client</h3>
 <p>Open the Theatersoft Client app in your browser, e.g. <code>https://home.example.com</code> (or <code>https://raspberrypi.local</code> if testing without a domain name).</p>
 <p class="page-image"><img src="/images/install-rpi3/pinpad.png" alt="Theatersoft Pinpad"></p>
@@ -167,22 +168,23 @@ unzip v1.4.zip
 <span class="token function">sudo</span> <span class="token function">make</span> <span class="token function">install</span>
 <span class="token function">sudo</span> <span class="token function">mv</span> /usr/local/lib/arm-linux-gnueabihf/libopenzwave.so* /usr/lib/arm-linux-gnueabihf/
 </code></pre><p>Add the ZWave service with <code>nano ~/example/config.json</code>. Insert the following object after the existing Device service:</p>
-<pre><code>        ,
+<pre><code class="language-javascript">        <span class="token punctuation">,</span>
         <span class="token punctuation">{</span>
-          <span class="token string">"enabled"</span><span class="token keyword">:</span> true,
-          <span class="token string">"module"</span><span class="token keyword">:</span> <span class="token string">"@theatersoft/zwave"</span>,
-          <span class="token string">"export"</span><span class="token keyword">:</span> <span class="token string">"ZWave"</span>,
-          <span class="token string">"name"</span><span class="token keyword">:</span> <span class="token string">"ZWave"</span>,
-          <span class="token string">"config"</span><span class="token keyword">:</span> <span class="token punctuation">{</span>
-            <span class="token string">"port"</span><span class="token keyword">:</span> <span class="token string">"/dev/ttyACM0"</span>,
-            <span class="token string">"options"</span><span class="token keyword">:</span> <span class="token punctuation">{</span>
-              <span class="token string">"Logging"</span><span class="token keyword">:</span> true,
-              <span class="token string">"ConsoleOutput"</span><span class="token keyword">:</span> true,
-              <span class="token string">"SaveLogLevel"</span><span class="token keyword">:</span> 5
+          <span class="token string">"enabled"</span><span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+          <span class="token string">"module"</span><span class="token punctuation">:</span> <span class="token string">"@theatersoft/zwave"</span><span class="token punctuation">,</span>
+          <span class="token string">"export"</span><span class="token punctuation">:</span> <span class="token string">"ZWave"</span><span class="token punctuation">,</span>
+          <span class="token string">"name"</span><span class="token punctuation">:</span> <span class="token string">"ZWave"</span><span class="token punctuation">,</span>
+          <span class="token string">"config"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+            <span class="token string">"port"</span><span class="token punctuation">:</span> <span class="token string">"/dev/ttyACM0"</span><span class="token punctuation">,</span>
+            <span class="token string">"options"</span><span class="token punctuation">:</span> <span class="token punctuation">{</span>
+              <span class="token string">"Logging"</span><span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+              <span class="token string">"ConsoleOutput"</span><span class="token punctuation">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+              <span class="token string">"SaveLogLevel"</span><span class="token punctuation">:</span> <span class="token number">5</span>
             <span class="token punctuation">}</span>
           <span class="token punctuation">}</span>
         <span class="token punctuation">}</span>
-</code></pre><p>Then reconfigure and redeploy. This performs all installation and restarts the server.</p>
+</code></pre>
+<p>Then reconfigure and redeploy. This performs all installation and restarts the server.</p>
 <pre><code><span class="token function">npm</span> run config deploy
 </code></pre><p>The ZWave service is now started and the client shows ZWave in the Services Settings (tap, left tap, Services):</p>
 <p class="page-image"><img src="/images/install-rpi3/settings.png" alt="Theatersoft Service Settings"></p>
