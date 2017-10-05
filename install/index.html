@@ -77,7 +77,7 @@ EOF
 <pre><code><span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
 <span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config
 <span class="token function">npm</span> run deploy
-</code></pre><p>Theatersoft is now running on port 443 (but you cannot connect a browser until we configure the SSL certificate):</p>
+</code></pre><p>Theatersoft is now running on port 443 as a systemd server:</p>
 <pre><code>pi@raspberrypi:~ $ systemctl status theatersoft
 ● theatersoft.service - Theatersoft server
    Loaded: loaded <span class="token punctuation">(</span>/etc/systemd/system/theatersoft.service<span class="token punctuation">;</span> enabled<span class="token punctuation">;</span> vendor preset: enabled<span class="token punctuation">)</span>
@@ -95,20 +95,8 @@ Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>2238
 Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Listening on port 443
 Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Starting <span class="token function">service</span> Device
 Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Started <span class="token function">service</span> Device
-</code></pre><blockquote>
-<p>I noticed at this point I couldn’t control my service e.g. <code>systemctl restart theatersoft</code> with user <code>pi</code>:</p>
-<pre><code>Failed to restart theatersoft.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files
-</code></pre><p>Is normal for Raspbian? Though it works as <code>root</code>, I’m used to using a nonroot user. So to fix it:</p>
-<pre><code><span class="token function">sudo</span> apt <span class="token function">install</span> policykit-1
-</code></pre><p>Then to fix policykit authentication requesting <code>root</code> instead of <code>pi</code> password:</p>
-<pre><code><span class="token function">sudo</span> -i
-<span class="token function">cat</span> <span class="token operator">&lt;&lt;</span> EOF <span class="token operator">>></span> /etc/polkit-1/localauthority.conf.d/51-admin.conf
-<span class="token punctuation">[</span>Configuration<span class="token punctuation">]</span>
-AdminIdentities<span class="token operator">=</span>unix-group:sudo
-EOF
-systemctl restart polkit.service
-</code></pre></blockquote>
-<h3 id="5-setup-ddclient-and-configure-domain-name">5. Setup ddclient and configure domain name</h3>
+</code></pre><h3 id="5-configure-server-ssl-certificate">5. Configure server SSL certificate</h3>
+<p>You won’t be able to connect a browser until we configure the SSL certificate.</p>
 <blockquote>
 <p>RECOMMENDED FOR TESTING ONLY</p>
 <p>You can create a self-signed certificate instead of configuring a domain name:</p>
@@ -139,7 +127,7 @@ home
     <span class="token string">"production"</span><span class="token punctuation">:</span> <span class="token boolean">true</span>
   <span class="token punctuation">}</span><span class="token punctuation">,</span>
 </code></pre>
-<p>Restart the Theatersoft server: <code>systemctl restart theatersoft</code>.</p>
+<p>Restart the Theatersoft server: <code>sudo systemctl restart theatersoft</code>.</p>
 <h3 id="6-pair-theatersoft-client">6. Pair Theatersoft Client</h3>
 <p>Open the Theatersoft Client app in your browser, e.g. <code>https://home.example.com</code> (or <code>https://raspberrypi.local</code> if testing without a domain name).</p>
 <p class="page-image"><img src="/images/install-rpi3/pinpad.png" alt="Theatersoft Pinpad"></p>
