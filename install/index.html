@@ -34,6 +34,7 @@
 <h2 id="requirements">Requirements</h2>
 <p class="page-image"><img src="/images/install-rpi3/rpi3.jpg" alt="Install Theatersoft Home on a Raspberry Pi 3"></p>
 
+<blockquote>
 <ul>
 <li>Raspberry Pi 3 Model B, (case optional)</li>
 <li>5V 2A power</li>
@@ -41,46 +42,25 @@
 <li>microSD card</li>
 <li>USB Z-Wave controller 908Mhz US frequency (SIGMA ACC-UZB3-U-STA or Aeotec Z-Stick Gen5)</li>
 </ul>
+</blockquote>
 <p>You’ll use a host PC to prepare the boot microSD card and connect to the Pi. My instructions assume a Linux PC, so you will need to perform equivalent steps for a different OS.</p>
 <p>You should have a domain name to use as the address for the Theatersoft Client web app. The domain name allows dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and is required for automatic HTTPS certificate renewal via LetsEncrypt. If you skip this, you’ll need to connect to your current IP address and override invalid certificate warnings from your browser.</p>
-<h2 id="start-installing">Start installing</h2>
-<h3 id="1-prepare-the-microsd-card-on-pc-">1. Prepare the microSD card (on PC)</h3>
-<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">RASPBIAN STRETCH LITE</a> (not DESKTOP) image zip file.</p>
-<p>Insert the microSD into your PC card reader and note the device name in <code>gnome-disks</code>.</p>
-<p>Unzip the image to the microSD (as <em>root</em> - be sure to replace X with the correct device name):</p>
-<pre><code><span class="token function">sudo</span> -i
-zcat 2017-09-07-raspbian-stretch-lite.zip <span class="token operator">></span> /dev/sdX
-</code></pre><p>Mount the boot partition in <code>gnome-disks</code> and create a file named <code>ssh</code> at the root of that partition:</p>
-<pre><code><span class="token function">touch</span> /media/<span class="token variable">$USER</span>/boot/ssh
-</code></pre><p>Unmount and remove the microSD card.</p>
-<h3 id="2-boot-the-pi-and-set-up-ssh">2. Boot the Pi and set up SSH</h3>
-<p>Insert the microSD card into the Pi and connect power and network. After a few seconds you’ll see the ethernet indicators working and you’ll be able to connect.</p>
-<p>Since the Pi is running Avahi, connect with <code>ssh pi@raspberrypi.local</code> (the password is raspberry). If that doesn’t work, you will need to find the Pi’s IP address. You can check your router’s admin page or use <code>nmap</code> if available, e.g. <code>nmap -sn 192.168.1.0/24 | grep pi</code>.</p>
-<p>Update your local ssh config so you can simply use <code>pi</code> as the host:</p>
-<pre><code><span class="token function">cat</span> <span class="token operator">&lt;&lt;</span> EOF <span class="token operator">>></span> ~/.ssh/config
-Host pi
-Hostname raspberrypi.local
-User pi
-EOF
-</code></pre><p>Secure the Pi by using ssh key authentication:</p>
-<pre><code>ssh-copy-id -i ~/.ssh/id_rsa pi
-</code></pre><p>And disable ssh password authentication on the Pi (<code>ssh pi</code>):</p>
-<pre><code><span class="token function">sudo</span> <span class="token function">sed</span> -i <span class="token string">'s|#PasswordAuthentication yes|PasswordAuthentication no|'</span> /etc/ssh/sshd_config
-</code></pre><h3 id="3-install-node-js">3. Install Node.js</h3>
-<p>The version of node in the raspbian repository is too old. We’ll use <a href="https://github.com/creationix/nvm">Node Version Manager</a> instead:</p>
-<pre><code>curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.4/install.sh <span class="token operator">|</span> <span class="token function">bash</span>
-</code></pre><p>Close and reopen your ssh terminal, then install node 8:</p>
-<pre><code>nvm <span class="token function">install</span> 8
-</code></pre><p>Now <code>which node</code> will return something like <code>/home/pi/.nvm/versions/node/v8.5.0/bin/node</code> but the Theatersoft Home systemd service requires <code>node</code> and <code>npm</code> to be in <code>/usr/local/bin</code>. You’ll need to symlink them:</p>
-<pre><code>n<span class="token operator">=</span><span class="token variable"><span class="token variable">$(</span><span class="token function">which</span> node<span class="token variable">)</span></span><span class="token punctuation">;</span> n<span class="token operator">=</span><span class="token variable">${n%/node}</span>
-<span class="token function">sudo</span> <span class="token function">ln</span> -sf <span class="token variable">$n</span>/node /usr/local/bin/node
-<span class="token function">sudo</span> <span class="token function">ln</span> -sf <span class="token variable">$n</span>/npm /usr/local/bin/npm
+<h2 id="install-steps">Install steps</h2>
+<h3 id="1-prepare-the-microsd-card-boot-image">1. Prepare the microSD card boot image</h3>
+<p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspian Stretch Lite</a> image and prepare the microSD using the <a href="https://www.raspberrypi.org/documentation/installation/installing-images/README.md">installation guide</a>. In particular, make sure SSH is enabled on the boot image.</p>
+<h3 id="2-boot-and-connect-to-the-pi">2. Boot and connect to the Pi</h3>
+<p>Insert the microSD card into the Pi and connect power and network. SSH to the Pi using: <code>ssh pi@raspberrypi.local</code> (password raspberry). See <a href="https://www.raspberrypi.org/documentation/remote-access/ssh/README.md">remote access</a> documentation for help with SSH.</p>
+<h3 id="3-install-node-js">3. Install Node.js</h3>
+<p>Run the following on the Pi :</p>
+<pre><code>curl -sL https://deb.nodesource.com/setup_8.x <span class="token operator">|</span> <span class="token function">sudo</span> -E <span class="token function">bash</span> -
+<span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> -y nodejs
 </code></pre><h3 id="4-install-theatersoft-home">4. Install Theatersoft Home</h3>
-<p>Create a directory where you’ll create your Theatersoft configuration (I suggest you name it the same as your domain name). Then install, configure, and deploy <code>Home</code>:</p>
-<pre><code><span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
+<p>Create a directory to store your Theatersoft configuration; then install, configure, and deploy <code>@theatersoft/home</code>:</p>
+<pre><code><span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example
+<span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
 <span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config
 <span class="token function">npm</span> run deploy
-</code></pre><p>Theatersoft is now running on port 443 as a systemd server:</p>
+</code></pre><p>The Theatersoft service is now running on port 443 but it won’t accept connections until the next step’:</p>
 <pre><code>pi@raspberrypi:~ $ systemctl status theatersoft
 ● theatersoft.service - Theatersoft server
    Loaded: loaded <span class="token punctuation">(</span>/etc/systemd/system/theatersoft.service<span class="token punctuation">;</span> enabled<span class="token punctuation">;</span> vendor preset: enabled<span class="token punctuation">)</span>
