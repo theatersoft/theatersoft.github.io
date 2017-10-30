@@ -60,29 +60,11 @@
 <span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
 <span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config
 <span class="token function">npm</span> run deploy
-</code></pre><p>The Theatersoft service is now running on port 443 but it won’t accept connections until the completion of the next step:</p>
-<pre><code>pi@raspberrypi:~ $ systemctl status theatersoft
-● theatersoft.service - Theatersoft server
-   Loaded: loaded <span class="token punctuation">(</span>/etc/systemd/system/theatersoft.service<span class="token punctuation">;</span> enabled<span class="token punctuation">;</span> vendor preset: enabled<span class="token punctuation">)</span>
-   Active: active <span class="token punctuation">(</span>running<span class="token punctuation">)</span> since Thu 2017-09-14 03:39:55 UTC<span class="token punctuation">;</span> 15min ago
- Main PID: 22385 <span class="token punctuation">(</span>node<span class="token punctuation">)</span>
-   CGroup: /system.slice/theatersoft.service
-           └─22385 /usr/local/bin/node server.js
-
-Sep 14 03:39:55 raspberrypi systemd<span class="token punctuation">[</span>1<span class="token punctuation">]</span>: Started Theatersoft server.
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft <span class="token punctuation">{</span> parent: undefined, children: <span class="token punctuation">{</span> server: Promise <span class="token punctuation">{</span> <span class="token operator">&lt;</span>pending<span class="token operator">></span>
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Bus name is /
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Config raspberrypi <span class="token punctuation">{</span> _letsencrypt: <span class="token punctuation">{</span> domain: <span class="token string">'example.com'</span>, e
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft starting Session undefined
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Client /opt/theatersoft/node_modules/@theatersoft/client
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Listening on port 443
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Starting <span class="token function">service</span> Device
-Sep 14 03:39:57 raspberrypi authbind<span class="token punctuation">[</span>22385<span class="token punctuation">]</span>: Theatersoft Started <span class="token function">service</span> Device
-</code></pre><h3 id="5-configure-server-ssl-certificate">5. Configure server SSL certificate</h3>
-<p>You won’t be able to connect a browser until we configure the SSL certificate.</p>
+</code></pre><p>The Theatersoft server is now running.  The next step will enable you to access it from outside your home network.</p>
+<h3 id="5-configure-dynamic-dns-and-server-ssl-certificate">5. Configure dynamic DNS and server SSL certificate</h3>
 <blockquote>
 <p>RECOMMENDED FOR TESTING ONLY</p>
-<p>You can create a self-signed certificate instead of configuring a domain name:</p>
+<p>If you want to create a self-signed certificate:</p>
 <pre><code><span class="token function">cd</span> /opt/theatersoft/.config/theatersoft
 openssl req -x509 -newkey rsa:4096 -keyout server.key -out server.cer -days 365 -nodes
 </code></pre><p>Accept the defaults when prompted. Skip to <em>Restart the Theatersoft server</em>.</p>
