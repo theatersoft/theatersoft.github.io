@@ -41,10 +41,10 @@
 <li>ethernet network (or WiFi, not covered here)</li>
 <li>microSD card</li>
 <li>USB Z-Wave controller 908Mhz US frequency (SIGMA ACC-UZB3-U-STA or Aeotec Z-Stick Gen5)</li>
+<li>a PC to prepare the boot microSD card and to use to connect to the Pi</li>
 </ul>
 </blockquote>
-<p>You’ll use a host PC to prepare the boot microSD card and connect to the Pi. My instructions assume a Linux PC, so you will need to perform equivalent steps for a different OS.</p>
-<p>You should have a domain name to use as the address for the Theatersoft Client web app. The domain name allows dynamic DNS (so you can always reach your host even if your ISP changes your IP address), and is required for automatic HTTPS certificate renewal via LetsEncrypt. If you skip this, you’ll need to connect to your current IP address and override invalid certificate warnings from your browser.</p>
+<p>You should also have a domain name for the Theatersoft Client web app. We’ll use it to set up dynamic DNS updates and to create an SSL certificate for the server.</p>
 <h2 id="install-steps">Install steps</h2>
 <h3 id="1-prepare-the-boot-microsd">1. Prepare the boot microSD</h3>
 <p>Download the latest <a href="https://www.raspberrypi.org/downloads/raspbian/">Raspian Stretch Lite</a> image and prepare the microSD using the <a href="https://www.raspberrypi.org/documentation/installation/installing-images/README.md">installation guide</a>. In particular, make sure SSH is enabled.</p>
