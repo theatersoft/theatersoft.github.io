@@ -22,6 +22,15 @@ var pv = function () {
     });
 };
 
+window.trackLink = function (e) {
+    const url = e.currentTarget.href,
+          hitCallback = () => document.location = url;
+    if (ga.loaded) {
+        ga('send', 'event', 'outbound', 'click', url, { transport: 'beacon', hitCallback });
+        e.preventDefault();
+    }
+};
+
 typeof pv === 'function' && pv();
 
 }());
