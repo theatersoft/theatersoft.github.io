@@ -111,7 +111,7 @@ unzip v1.4.zip
 <span class="token function">sudo</span> apt <span class="token function">install</span> libudev-dev git-core
 <span class="token function">make</span>
 <span class="token function">sudo</span> <span class="token function">make</span> <span class="token function">install</span>
-<span class="token function">sudo</span> <span class="token function">mv</span> /usr/local/lib/arm-linux-gnueabihf/libopenzwave.so* /usr/lib/arm-linux-gnueabihf/
+<span class="token function">sudo</span> <span class="token function">mv</span> /usr/local/lib/libopenzwave.so* /usr/lib/arm-linux-gnueabihf/
 </code></pre><p>Add the ZWave service with <code>nano ~/example/config.json</code>. Insert the following object after the existing Device service:</p>
 <pre><code class="language-javascript">        <span class="token punctuation">,</span>
         <span class="token punctuation">{</span>
