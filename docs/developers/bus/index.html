@@ -40,9 +40,9 @@
 <pre><code>import {bus} from &#39;@theatersoft/bus&#39;
 
 bus.start(context)
-</code></pre><p>… where <code>context</code> is an object that defines the connection to the message bus.</p>
-<h3 id="-type-context-"><code>type Context</code></h3>
-<p>A Context object is used to create </p>
+</code></pre><p>… where <code>context</code> is an object that declares how to create the connection to the message bus. A Node.js node may omit the context and the environment vars <code>BUS</code> and <code>AUTH</code> will be used instead.</p>
+<h4 id="-type-context-"><code>type Context</code></h4>
+<p>A <code>Context</code> contains a parent and/or a children property: </p>
 <pre><code>export type Context = {
     parent? :Parent,
     children? :Children
@@ -59,7 +59,12 @@ type Children = {
     port :number,
     check :(string) =&gt; Promise&lt;boolean&gt;
 }
-</code></pre><h3 id="-class-bus-"><code>class Bus</code></h3>
+</code></pre><p>Context examples:</p>
+<p><code>{parent: {url: &#39;ws://localhost:5453&#39;}}</code> creates a connection from a browser to a server at the specified url.</p>
+<p> <code>{children: {port: 5453}}</code> creates a new <code>WebSocketServer</code> on port 5453.</p>
+<p> <code>{children: {server}}</code> creates a new <code>WebSocketServer</code> and add it to an existing http.Server or https.Server.</p>
+<h4 id="authorization">Authorization</h4>
+<h4 id="-class-bus-"><code>class Bus</code></h4>
 <pre><code>    start (context :Context)
     started ()
     get root () :boolean
@@ -75,8 +80,7 @@ type Children = {
     close ()
     introspectNode (path :string)
     resolveName (name :string)
-</code></pre><h3 id="types">Types</h3>
-<p>Connection</p>
+</code></pre><h4 id="-connection-"><code>Connection</code></h4>
 </div></article></main>
 <footer><div><span>© 2018 Theatersoft, LLC</span></div></footer>
 </body>
