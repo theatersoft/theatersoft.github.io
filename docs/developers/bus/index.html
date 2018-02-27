@@ -31,7 +31,52 @@
 <nav><a href="/"><svg><use href="#svg-logo"></use></svg><span>Theatersoft</span></a><ul id="_566"><a href="/docs/" class="_40d">Docs</a><a href="/install/" class>Install</a><a href="/solutions/" class>Solutions</a><a href="https://community.theatersoft.com/" onclick="trackLink(event)" class>Community</a><a target="_blank" href="https://github.com/theatersoft"><svg><use href="#svg-github"></use></svg></a></ul><div id="_c62"><svg><use href="#svg-list"></use></svg></div></nav>
 <header class="_593"></header>
 <main class="_485"><article><div class="markdown"><h1 id="bus">bus</h1>
-<p>The message bus is the foundation of the Theatersoft platform. It enables communication and other features needed to create distributed applications between host Node.js servers and client web browsers.</p>
+<blockquote>
+<p>Note the distinction between the <em>Node.js</em> runtime and a <em>node</em> element of a bus network.</p>
+</blockquote>
+<p>The message bus is the foundation of the Theatersoft platform. It provides messaging and other features needed to create distributed applications running on Node.js servers and web browser clients.</p>
+<h2 id="api">API</h2>
+<p>A bus node implements this code:</p>
+<pre><code>import {bus} from &#39;@theatersoft/bus&#39;
+
+bus.start(context)
+</code></pre><p>… where <code>context</code> is an object that defines the connection to the message bus.</p>
+<h3 id="-type-context-"><code>type Context</code></h3>
+<p>A Context object is used to create </p>
+<pre><code>export type Context = {
+    parent? :Parent,
+    children? :Children
+}
+
+type Parent = {
+    url :string,
+    auth :?string
+}
+
+type Children = {
+    server :any,
+    host :string,
+    port :number,
+    check :(string) =&gt; Promise&lt;boolean&gt;
+}
+</code></pre><h3 id="-class-bus-"><code>class Bus</code></h3>
+<pre><code>    start (context :Context)
+    started ()
+    get root () :boolean
+    get name () :string
+    get proxy () :any
+    registerObject (name :string, obj :any, intf :string[], meta :any) :Promise&lt;BusObject&gt;
+    unregisterObject (name :string) :Promise&lt;void&gt;
+    request (name :string, ...args :mixed[])
+    registerListener (name :string, cb :Listener)
+    unregisterListener (name :string, cb :Listener)
+    on (type :string, cb :Listener)
+    off (type :string, cb :Listener)
+    close ()
+    introspectNode (path :string)
+    resolveName (name :string)
+</code></pre><h3 id="types">Types</h3>
+<p>Connection</p>
 </div></article></main>
 <footer><div><span>© 2018 Theatersoft, LLC</span></div></footer>
 </body>
