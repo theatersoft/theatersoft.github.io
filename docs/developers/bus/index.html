@@ -31,18 +31,20 @@
 <nav><a href="/"><svg><use href="#svg-logo"></use></svg><span>Theatersoft</span></a><ul id="_566"><a href="/docs/" class="_40d">Docs</a><a href="/install/" class>Install</a><a href="https://community.theatersoft.com/" onclick="trackLink(event)" class>Community</a><a target="_blank" href="https://github.com/theatersoft"><svg><use href="#svg-github"></use></svg></a></ul><div id="_c62"><svg><use href="#svg-list"></use></svg></div></nav>
 <header class="_593"></header>
 <main class="_485"><article><div class="markdown"><h1 id="bus">bus</h1>
+<p>The Bus provides solutions for remote method calls and remote event publish/subscribe between nodes in a distributed application that work much like the ones that developers already use in normal applications. </p>
+<p>It uses WebSockets and JSON encoded messages, and while knowing all the details of the implementation is not necessary just to use the API, some of the key concepts need to be explained.</p>
 <blockquote>
-<p>Note the distinction between the <em>Node.js</em> runtime and a <em>node</em> element of a bus network.</p>
+<p>Note on naming: the distinction between the <em>Node.js</em> runtime and a <em>node</em> element of a bus network.</p>
 </blockquote>
-<p>The Bus provides remote messaging functionality that enables remote method calls and event publish/subscribe between nodes in a distributed application much like the same operations in a normal application. It supports both Node and browser code and uses WebSocket connections to provide bidirectional data flow. </p>
 <h3 id="node-names">Node names</h3>
-<p>The bus network forms a rooted tree and can connect any number of nodes. Each non-root node has a single parent connection and may have optional child node connections. Each node connection is indexed to form a path from root which uniquely names each node and forms the basis for message routing between nodes. </p>
-<p>Example: Bus names in a four node network (one root with two children, the second child also has its own child):</p>
+<p>The bus network topology is a rooted tree. Each child node has at least a parent connection and may also be a parent of nested child node connections. Node connections are indexed serially starting from 1 (0 being the parent connection), such that a full path from root uniquely names each node. Node path names are the basis for message routing between nodes. </p>
+<p>Example: A four node network (a root with two children, one with its own child):</p>
 <pre><code>/
     /1/
     /2/
         /2/1/
-</code></pre><h3 id="connection-context-">Connection <code>Context</code></h3>
+</code></pre><p>In this example, messages from sender node <code>/1/</code> to destination node <code>/2/1</code> route through intermediate nodes <code>/</code> and <code>/2/</code>.</p>
+<h3 id="connection-context-">Connection <code>Context</code></h3>
 <p>A bus node starts the bus using a Context object:</p>
 <pre><code>import {bus} from &#39;@theatersoft/bus&#39;
 
@@ -52,16 +54,19 @@ bus.start(context)
 <p><code>{parent: {url: &#39;ws://localhost:5453&#39;}}</code> creates a parent connection to a server URL.</p>
 <p> <code>{children: {port: 5453}}</code> creates a new <code>WebSocketServer</code> on port 5453 which creates child connections when children connect to it. </p>
 <p> <code>{children: {server}}</code> creates a new <code>WebSocketServer</code> using an existing http.Server or https.Server which creates child connections when children connect to it.</p>
-<h3 id="bus-and-node-objects">Bus and Node objects</h3>
-<p>The bus implements remote method calls to <em>bus objects</em>, which are normal JavaScript objects that have been registered using <code>registerObject</code>. Registration requires two arguments, a bus object name and the object.</p>
-<p>If the bus object name begins with a uppercase letter, it must be globally unique since it will be registered with the global bus <em>Manager</em> in addition to the local node.</p>
-<p>Example: Register a bus object <code>Ping</code> with one method <code>ping</code>:  </p>
+<h3 id="bus-objects">Bus objects</h3>
+<p>The bus implements remote method calls to <em>bus objects</em>, which are normal JavaScript objects that have been registered using <code>bus.registerObject (name :string, obj :any)</code>. The name argument is the object name that becomes mapped to the registered object.  </p>
+<blockquote>
+<p>Names beginning with an uppercase letter must be globally and locally unique since they are also registered at a global scope.</p>
+<p>Names beginning with a lowercase letter are only registered at the local node and must be locally unique within the node.</p>
+</blockquote>
+<p>Example: Register a bus object name <code>Ping</code> with one method <code>ping</code>:  </p>
 <pre><code>bus.registerObject(&#39;Ping&#39;, {ping: () =&gt; &#39;PING!&#39;})
 </code></pre><p>The <em>Manager</em> is used to resolve a bus object name:</p>
 <pre><code>bus.resolveName(&#39;Ping&#39;)
 </code></pre><p>…returns the full path to the object, e.g. <code>/2/1/Ping</code> if it was registered on the last node in the previous example.</p>
 <blockquote>
-<p>Local node objects always requires the full path, e.g. <code>/2/1/ping</code>, but they’re not commonly used in application code. </p>
+<p>Node objects always requires the full path, e.g. <code>/2/1/ping</code> </p>
 </blockquote>
 <h3 id="bus-object-method-calls">Bus object method calls</h3>
 <p>With the full path, we can call methods on the object: </p>
@@ -108,6 +113,77 @@ bus.start(context)
     resolveName (name :Name) :Promise&lt;Name | void&gt; 
     removeName (name :Name, _sender? :Path) :Promise&lt;void&gt; 
     check (auth :string)
+</code></pre><h3 id="debugging">Debugging</h3>
+<p>In a browser bus node, the WebSocket frames can be viewed using the browser’s built-in tools: </p>
+<p>Example of WebSocket frames at client start up: </p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">Data</th>
+<th style="text-align:left">Length</th>
+<th style="text-align:left">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><code>{&quot;auth&quot;:&quot;&quot;}</code></td>
+<td style="text-align:left">11</td>
+<td style="text-align:left">14:48:02.799</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;auth&quot;:&lt;AUTH_STRING&gt;}</code></td>
+<td style="text-align:left">47</td>
+<td style="text-align:left">14:48:02.800</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;hello&quot;:&quot;/42/&quot;}</code></td>
+<td style="text-align:left">16</td>
+<td style="text-align:left">14:48:02.817</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;req&quot;:{&quot;path&quot;:&quot;/&quot;,&quot;intf&quot;:&quot;Bus&quot;,&quot;member&quot;:&quot;addNode&quot;,&quot;args&quot;:[&quot;/42/&quot;],&quot;sender&quot;:&quot;/42/&quot;,&quot;id&quot;:0}}</code></td>
+<td style="text-align:left">91</td>
+<td style="text-align:left">14:48:02.818</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;req&quot;:{&quot;path&quot;:&quot;/&quot;,&quot;intf&quot;:&quot;Bus&quot;,&quot;member&quot;:&quot;resolveName&quot;,&quot;args&quot;:[&quot;Config&quot;],&quot;sender&quot;:&quot;/42/&quot;,&quot;id&quot;:1}}</code></td>
+<td style="text-align:left">97</td>
+<td style="text-align:left">14:48:02.819</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;res&quot;:{&quot;id&quot;:0,&quot;path&quot;:&quot;/42/&quot;}}</code></td>
+<td style="text-align:left">30</td>
+<td style="text-align:left">14:48:02.820</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;res&quot;:{&quot;id&quot;:1,&quot;path&quot;:&quot;/42/&quot;,&quot;res&quot;:&quot;/&quot;}}</code></td>
+<td style="text-align:left">40</td>
+<td style="text-align:left">14:48:02.820</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;req&quot;:{&quot;path&quot;:&quot;/&quot;,&quot;intf&quot;:&quot;Config&quot;,&quot;member&quot;:&quot;get&quot;,&quot;args&quot;:[],&quot;sender&quot;:&quot;/42/&quot;,&quot;id&quot;:2}}</code></td>
+<td style="text-align:left">84</td>
+<td style="text-align:left">14:48:02.821</td>
+</tr>
+<tr>
+<td style="text-align:left"><code>{&quot;res&quot;:{&quot;id&quot;:2,&quot;path&quot;:&quot;/42/&quot;,&quot;res&quot;:&lt;CONFIG_OBJECT&gt;}}</code></td>
+<td style="text-align:left">4022</td>
+<td style="text-align:left">14:48:02.823</td>
+</tr>
+</tbody>
+</table>
+<p>In both Node and browser nodes, you may rebuild the bus module using <code>npm run build:debug</code> to enable debug BUS logging.</p>
+<p>Example of the same client start up from the server logs:</p>
+<pre><code>Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS / adding child /42
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS   0-&gt; /Bus.addNode( /42/ ) from /42/
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS manager.addNode /42/
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS &lt;-0   undefined
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS   1-&gt; /Bus.resolveName( Config ) from /42/
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS manager.resolveName Config /
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS &lt;-1   /
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS   2-&gt; /Config.get( ) from /42/
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT bus Config.get
+Mar 01 14:48:02 office theatersoft[10506]: THEATERSOFT BUS &lt;-2   &lt;CONFIG_OBJECT&gt;
 </code></pre></div></article></main>
 <footer><div><span>© 2018 Theatersoft, LLC</span></div></footer>
 </body>
