@@ -90,7 +90,8 @@ bus.start(context)
 <p>If <code>check(&lt;AUTH_STRING&gt;)</code> resolves <code>true</code> then the server responds with <code>{&quot;hello&quot;:&quot;&lt;NODE_NAME&gt;&quot;}</code> and the connection is ready for use. </p>
 <h3 id="connection-failure-and-reconnection">Connection failure and reconnection</h3>
 <p>Since network connections are unreliable, reconnection and recovery from connection failures must occur without any user intervention.</p>
-<p>The bus reconnects failed connections by attempting to reopen the parent connection from the child node, using an exponential backoff timeout between retries. Once reopened, the <code>bus</code> emits a <code>reconnect</code> event. It is the reponsibility of the application developer to listen for this event and perform any necessary recovery actions.   </p>
+<p>The child <code>bus</code> node emits <code>disconnect</code> on a parent connection failure and begins the reconnection process. It attempts to reopen the parent connection from the child node, using an exponential backoff timeout between retries. On the parent side of the connection, the lost node is removed from the bus <code>Manager</code>, which also removes any associated bus objects. </p>
+<p>Once reopen succeeds, the child re-adds its node and objects to the Manager. Then the <code>bus</code> emits a <code>reconnect</code> event. It is the reponsibility of the application developer to listen for this event and perform any further recovery actions, such as resyncing state.</p>
 <h3 id="theatersoft-services">Theatersoft services</h3>
 <p>Services are global bus objects with additional conventions such as service registration and lifecycle control which are out of the scope of the bus. See <a href="/doc/server/">Server</a> for more information.</p>
 <h4 id="-class-bus-"><code>class Bus</code></h4>
