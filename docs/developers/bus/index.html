@@ -83,7 +83,7 @@ bus.start(context)
 }
 </code></pre><p><code>bus.registerListener (name :string, cb :Listener)</code> is used to subscribe to signals, where the signal name combines the bus object name with the member argument from <code>signal()</code>.  E.g. <code>Device.state</code>  </p>
 <h3 id="authorization">Authorization</h3>
-<p>Authorization is required of child connections by creating the parent server connection using a <code>Context</code> with a <code>check :(string) =&gt; Promise&lt;boolean&gt;</code> function.</p>
+<p>Authorization is required of child connections if the parent server connection was created using a <code>Context</code> with a <code>check :(string) =&gt; Promise&lt;boolean&gt;</code> function.</p>
 <p>The authorization handshake is this message from the server immediately after connection open:
 <code>{&quot;auth&quot;:&quot;&quot;}</code></p>
 <p>The child must respond with: <code>{&quot;auth&quot;:&lt;AUTH_STRING&gt;}</code>, which is performed by the bus using the <code>auth</code> member from the child’s <code>Context</code>. </p>
