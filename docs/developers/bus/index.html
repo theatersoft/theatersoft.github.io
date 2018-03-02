@@ -37,7 +37,7 @@
 <p>Note on naming: the distinction between the <em>Node.js</em> runtime and a <em>node</em> element of a bus network.</p>
 </blockquote>
 <h3 id="node-names">Node names</h3>
-<p>The bus network topology is a rooted tree. Each child node has at least a parent connection and may also be a parent of nested child node connections. Node connections are indexed serially starting from 1 (0 being the parent connection), such that a full path from root uniquely names each node. Node path names are the basis for message routing between nodes. </p>
+<p>The bus network topology is a rooted tree. Each child node has at least a parent connection and may also be a parent of nested child node connections. Node connections are indexed serially starting from 1 (0 being the parent connection), such that a full path from root uniquely names each node. Node names are the basis for message routing between nodes. </p>
 <p>Example: A four node network (a root with two children, one with its own child):</p>
 <pre><code>/
     /1/
@@ -52,8 +52,8 @@ bus.start(context)
 </code></pre><p>… where <code>context</code> declares how to create the connection to the message bus. A Node.js node may omit the context and use the environment vars <code>BUS</code> and <code>AUTH</code> instead.</p>
 <p>Context examples:</p>
 <p><code>{parent: {url: &#39;ws://localhost:5453&#39;}}</code> creates a parent connection to a server URL.</p>
-<p> <code>{children: {port: 5453}}</code> creates a new <code>WebSocketServer</code> on port 5453 which creates child connections when children connect to it. </p>
-<p> <code>{children: {server}}</code> creates a new <code>WebSocketServer</code> using an existing http.Server or https.Server which creates child connections when children connect to it.</p>
+<p><code>{children: {port: 5453}}</code> creates a new <code>WebSocketServer</code> on port 5453 which creates child connections when children connect to it. </p>
+<p><code>{children: {server}}</code> creates a new <code>WebSocketServer</code> using an existing http.Server or https.Server which creates child connections when children connect to it.</p>
 <h3 id="bus-objects">Bus objects</h3>
 <p>The bus implements remote method calls to <em>bus objects</em>, which are normal JavaScript objects that have been registered using <code>bus.registerObject (name :string, obj :any)</code>. The name argument is the object name that becomes mapped to the registered object.  </p>
 <blockquote>
@@ -83,7 +83,14 @@ bus.start(context)
 }
 </code></pre><p><code>bus.registerListener (name :string, cb :Listener)</code> is used to subscribe to signals, where the signal name combines the bus object name with the member argument from <code>signal()</code>.  E.g. <code>Device.state</code>  </p>
 <h3 id="authorization">Authorization</h3>
+<p>Authorization is required of child connections by creating the parent server connection using a <code>Context</code> with a <code>check :(string) =&gt; Promise&lt;boolean&gt;</code> function.</p>
+<p>The authorization handshake is this message from the server immediately after connection open:
+<code>{&quot;auth&quot;:&quot;&quot;}</code></p>
+<p>The child must respond with: <code>{&quot;auth&quot;:&lt;AUTH_STRING&gt;}</code>, which is performed by the bus using the <code>auth</code> member from the child’s <code>Context</code>. </p>
+<p>If <code>check(&lt;AUTH_STRING&gt;)</code> resolves <code>true</code> then the server responds with <code>{&quot;hello&quot;:&quot;&lt;NODE_NAME&gt;&quot;}</code> and the connection is ready for use. </p>
 <h3 id="connection-failure-and-reconnection">Connection failure and reconnection</h3>
+<p>Since network connections are unreliable, reconnection and recovery from connection failures must occur without any user intervention.</p>
+<p>The bus reconnects failed connections by attempting to reopen the parent connection from the child node, using an exponential backoff timeout between retries. Once reopened, the <code>bus</code> emits a <code>reconnect</code> event. It is the reponsibility of the application developer to listen for this event and perform any necessary recovery actions.   </p>
 <h3 id="theatersoft-services">Theatersoft services</h3>
 <p>Services are global bus objects with additional conventions such as service registration and lifecycle control which are out of the scope of the bus. See <a href="/doc/server/">Server</a> for more information.</p>
 <h4 id="-class-bus-"><code>class Bus</code></h4>
