@@ -33,11 +33,20 @@
 <main class="_485"><article><div class="markdown"><h1 id="developer-guide">Developer Guide</h1>
 <h2 id="concepts">Concepts</h2>
 <h3 id="-bus-messaging-bus-"><a href="bus/">Bus Messaging</a></h3>
-<h3 id="services-implementation">Services Implementation</h3>
+<h3 id="service-modules">Service modules</h3>
+<p>Services are loosely coupled to the rest of the Theatersoft platform using <a href="bus/">Bus</a> messaging. They should be built as separate modules from their own source repositories and published as individual NPM packages. They should only share a module when several service exports are closely related by a common codebase.</p>
+<h3 id="runtime-package-vs-source-repo">Runtime package vs. source repo</h3>
+<p>The <a href="https://www.npmjs.com/~theatersoft">@theatersoft</a> npm packages are built from the source repositories on <a href="https://github.com/theatersoft">github.com/theatersoft</a> using a variety of modern tools including Babel for advanced JavaScript and Rollup for ES module optimization. None of these build tools are required at runtime, so only the generated dist output directories are published to npm.</p>
+<p>A default site deployment consists of a <code>/opt/theatersoft/package.json</code> containing all the service dependencies and <code>npm install</code> in that directory. Those installed dist packages will be replaced by links their locally built versions during the development process. </p>
+<h3 id="module-build-details">Module Build Details</h3>
+<p>Theatersoft modules are built with custom build.js scripts following common conventions.   </p>
+<h3 id="npm-cli-quality-issues">Npm CLI Quality Issues</h3>
+<p>The <a href="https://github.com/npm/npm/issues">abysmal</a> state of the npm CLI requires workarounds for long-standing bugs (<a href="https://github.com/npm/npm/issues/10343">10343</a>, <a href="https://github.com/npm/npm/issues/16853">16853</a>, <a href="https://github.com/npm/npm/issues/17287">17287</a>) related to npm breaking when using the <a href="https://docs.npmjs.com/cli/link">npm-link</a> feature. There will be situations noted where <code>npm</code> fails but the <code>yarn</code> alternative works properly.</p>
 <h2 id="development-environment">Development Environment</h2>
 <ul>
 <li>Linux development machine</li>
 <li>Node.js</li>
+<li>Theatersoft site deployed in <code>/opt/theatersoft</code></li>
 </ul>
 <h2 id="build-instructions">Build Instructions</h2>
 <p>The <code>theatersoft/theatersoft</code> Github repo contains submodule links to each of the required repos and build scripts to perform a full build.    </p>
