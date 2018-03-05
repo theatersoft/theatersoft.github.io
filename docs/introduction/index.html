@@ -36,22 +36,26 @@
 <p>“…automate your home with JavaScript”</p>
 </blockquote>
 <h2 id="motivation">Motivation</h2>
-<p>You want your smart home devices to work together flawlessly, so you use a central hub to connect them. But if you value privacy, reliablity, extensiblity, and complete control over your own home then buying a proprietary <em>MegaCorp</em> hub is not the best choice. Only open source solutions will satisfy those concerns.</p>
-<p>An open source solution that you can easily audit and customize yourself is even better, so Theatersoft uses JavaScript for its web client and server-side hub. It uses the modern JavaScript ecosystem to build a platform designed to support extensibility in two areas: add-on services for device support, and user automations.</p>
-<p>The base platform defines basic device interfaces that add-on services (such as ZWave) can implement for their own device classes. They may also implement custom configuration UI or even entire applets to extend the base web client.  </p>
-<p>Automation usually means creating rules which combine trigger condition with various actions, but that’s far less powerful  compared to writing automation code directly in JavaScript. Theatersoft should provide a great developer experience for user automations. </p>
+<p>You want your smart home devices to work together flawlessly, so you use a central hub to connect them. But if you value privacy, reliablity, extensiblity, and complete control over your own home then proprietary hub are poor choices. Only open source solutions satisfy those concerns.</p>
+<p>An open source solution that you can easily audit and customize yourself is even better, so the solution needs to use JavaScript for its web client and server-side hub. The modern JavaScript ecosystem can allow add-on services for device support.</p>
+<p>The goal is to build a base platform with an architecture designed for home automation applications with support  for custom user code for automations and extensions.</p>
 <h2 id="principles">Principles</h2>
-<h3 id="privacy">Privacy</h3>
-<p>Devices that depends on a cloud service are useless during internet or service outages. Surveillance products funded through advertising or that exist to provide another retail channel cannot be trustworthy. </p>
-<h3 id="user-control">User Control</h3>
-<p>Proprietary products restrict your control. They decide what features they provide, what devices they support, and what happens to your data. They can arbitrarily decide to remove features, stop working due to service outages, expose your network and data through security flaws, etc.  </p>
+<h3 id="privacy-trust-reliablity">Privacy, Trust, Reliablity</h3>
+<p>Devices that depends on a cloud service are unusable during internet or service outages. Surveillance products funded through advertising or that exist to provide retail channels cannot be trustworthy.</p>
+<p>Proprietary products decide what features they provide, what devices they support, and what happens to your data. They could arbitrarily decide to remove features, accidentally stop working due to service outages, expose your network and data through security flaws, etc.  </p>
 <h3 id="platform">Platform</h3>
-<p>Theatersoft Home is an open source hub built on a modular JavaScript platform for distributed application development. The platform provides a message bus to connect web clients and server-side JavaScript code using a global service manager. Theatersoft implements core home automation and is open to community driven development to support additional devices. Contributions are welcome, even for proprietary devices, since the user chooses which ones to use.  </p>
+<p>Theatersoft Home is a platform that supports extensibility by design. </p>
+<h5 id="highlights">Highlights</h5>
+<ul>
+<li>A modern message bus and service architecture designed for distributed applications.</li>
+<li>Core home automation services implement common device types, state and actions.</li>
+<li>Device services provide integrations for device classes and protocols. </li>
+<li>A base web user interface enables custom configuration extensions or even entire applets.</li>
+</ul>
 <h2 id="alternatives">Alternatives</h2>
 <p>Is Theatersoft appropriate for you? </p>
-<p>You may have unsupported devices. If building device support yourself (with or without community help) isn’t possible, you may need to look elsewhere.</p>
-<p>Theatersoft fulfills my needs but other platforms are more mature. You may decide to use an older platform with a larger community. However, nothing is perfect, and it doesn’t hurt to investigate all options. </p>
-<p>You may prefer a different language than JavaScript, and decide to use an alternative that uses your favorite language.</p>
+<p>You may have unsupported devices. If building device support yourself (with or without community help) isn’t possible, you may need to look elsewhere for now.</p>
+<p>Theatersoft is a new platform with the potential to leverage a large community of developer support. Try out a test installation and give some feedback, especially if you enjoy the JavaScript ecosystem and want to contribute.  </p>
 <p>Two popular open source alternatives are:</p>
 <ul>
 <li><p><a href="https://home-assistant.io/">Home Assistant</a> Python 3 backend, JavaScript and Polymer frontend</p>
@@ -59,7 +63,7 @@
 <li><p><a href="http://www.openhab.org/">openHAB</a> Java backend, various frontends</p>
 </li>
 </ul>
-<p>Each can also be installed on the Raspberry Pi 3.  </p>
+<p>Each can also be installed on the Raspberry Pi 3. Try all three! </p>
 <h2 id="home-automation">Home Automation</h2>
 <h3 id="-glossary-glossary-"><a href="glossary/">Glossary</a></h3>
 </div></article></main>

@@ -93,7 +93,7 @@ bus.start(context)
 <p>The child <code>bus</code> node emits <code>disconnect</code> on a parent connection failure and begins the reconnection process. It attempts to reopen the parent connection from the child node, using an exponential backoff timeout between retries. On the parent side of the connection, the lost node is removed from the bus <code>Manager</code>, which also removes any associated bus objects. </p>
 <p>Once reopen succeeds, the child re-adds its node and objects to the Manager. Then the <code>bus</code> emits a <code>reconnect</code> event. It is the reponsibility of the application developer to listen for this event and perform any further recovery actions, such as resyncing state.</p>
 <h3 id="theatersoft-services">Theatersoft services</h3>
-<p>Services are global bus objects with additional conventions such as service registration and lifecycle control which are out of the scope of the bus. See <a href="/doc/server/">Server</a> for more information.</p>
+<p>Theatersoft services are global bus objects with additional conventions such as service registration and lifecycle control which are beyond the scope of the bus. See <a href="/doc/server/">Server</a> for more information.</p>
 <h4 id="-class-bus-"><code>class Bus</code></h4>
 <pre><code>    start (context :Context)
     started ()
