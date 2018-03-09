@@ -39,12 +39,12 @@
 <p><code>{parent: {url: &#39;ws://localhost:5453&#39;}}</code> creates a parent connection to a server (at the specified URL).</p>
 <p><code>{children: {port: 5453}}</code> creates a new <code>WebSocketServer</code> (on the specified port) that creates child connections when children connect to it. </p>
 <p><code>{children: {server}}</code> creates a new <code>WebSocketServer</code> (using the same port as the specified <code>http</code>/<code>https.Server</code>) that creates child connections when children connect to it.</p>
-<p>Use the context to start the a bus node:   </p>
+<p>Pass the context to start the bus node:   </p>
 <pre><code>import {bus} from &#39;@theatersoft/bus&#39;
 
 bus.start(context)
 </code></pre><blockquote>
-<p>Node.js nodes: If <code>context</code> is <code>undefined</code>, the process environment vars <code>BUS</code> and <code>AUTH</code> are used instead.</p>
+<p>Without a context argument to <code>start</code>, parent url defaults to the <code>location.host</code> (browser only) or the process environment variable <code>BUS</code> (Node.js only).</p>
 </blockquote>
 <h3 id="nodes">Nodes</h3>
 <p>The bus network topology is a rooted tree. Each child node has at least a parent connection and may also be a parent of nested child node connections. Node connections are indexed serially starting from 1 (0 being the parent connection), such that a full path from root uniquely names each node. Node names are the basis for message routing between nodes. </p>
