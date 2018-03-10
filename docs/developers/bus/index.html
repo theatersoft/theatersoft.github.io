@@ -34,20 +34,40 @@
 <p>Theatersoft Bus is a zero friction approach to distributed JavaScript application development.</p>
 <p>The Bus transports remote method calls and remote event publish/subscribe between nodes in a distributed application that work much like the ones that developers already use in normal applications.</p>
 <h3 id="context-and-connections">Context and Connections</h3>
-<p><code>Context</code> is the configuration object that describes how to open bus connection(s) to other node(s) in the network.</p>
-<p>Example contexts:</p>
-<p><code>{parent: {url: &#39;ws://localhost:5453&#39;}}</code> creates a parent connection to a server (at the specified URL).</p>
-<p><code>{children: {port: 5453}}</code> creates a new <code>WebSocketServer</code> (on the specified port) that creates child connections when children connect to it. </p>
-<p><code>{children: {server}}</code> creates a new <code>WebSocketServer</code> (using the same port as the specified <code>http</code>/<code>https.Server</code>) that creates child connections when children connect to it.</p>
-<p>Pass the context to start the bus node:   </p>
+<p><code>Context</code> is a configuration object that describes how to create bus connection(s) to other node(s) in the network.</p>
+<p>For example:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>{parent: {url: &#39;ws://localhost:5453&#39;}}</code></td>
+<td>create a parent connection to a server (at the specified URL)</td>
+</tr>
+<tr>
+<td><code>{children: {port: 5453}}</code></td>
+<td>a new <code>WebSocketServer</code> that creates child connections (on the specified port)</td>
+</tr>
+<tr>
+<td><code>{children: {server}}</code></td>
+<td>a new <code>WebSocketServer</code>  that creates child connections (on the same port as the specified <code>http</code>/<code>https.Server</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Use the context to start the bus node:   </p>
 <pre><code>import {bus} from &#39;@theatersoft/bus&#39;
 
 bus.start(context)
 </code></pre><blockquote>
-<p>Without a context argument to <code>start</code>, parent url defaults to the <code>location.host</code> (browser only) or the process environment variable <code>BUS</code> (Node.js only).</p>
+<p>Calling <code>start()</code> without context will create a parent connection using the variable <code>location.host</code> (browser only) or the process environment variable <code>BUS</code> (Node.js only).</p>
 </blockquote>
 <h3 id="nodes">Nodes</h3>
-<p>The bus network topology is a rooted tree. Each child node has at least a parent connection and may also be a parent of nested child node connections. Node connections are indexed serially starting from 1 (0 being the parent connection), such that a full path from root uniquely names each node. Node names are the basis for message routing between nodes. </p>
+<p>A bus network begins with a single root node, i.e. a parentless server that accepts connections from child nodes. Child nodes connect to the parent and may also have nested children. The entire network topology is a rooted tree structure.</p>
+<p>Node connections are indexed serially starting from 1 (0 being the parent connection), such that a full path from root is a unique node name. Node names are the basis for message routing between nodes. </p>
 <p>Example: A four node network (a root with two children, one with its own child):</p>
 <pre><code>/
     /1/
