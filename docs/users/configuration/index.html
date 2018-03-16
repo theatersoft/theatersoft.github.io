@@ -118,6 +118,15 @@
 <li><p>Rerun <code>npm run config deploy</code></p>
 </li>
 </ol>
+<h3 id="adding-servers">Adding Servers</h3>
+<p>You may want to add additional servers. For example, you can connect device controllers or video capture cards to different machines physically located where they’re most convenient.</p>
+<p>The steps to add a server are similar to adding individual services:</p>
+<ol>
+<li><p>Edit <code>config.json</code> and add a new entry to the <code>host[]</code> array, copying an existing host and modifying to <code>name</code>, <code>host</code>, and <code>services</code> as needed.</p>
+</li>
+<li><p>Rerun <code>npm run config deploy</code> (This requires passwordless login to the host using <code>ssh</code> key authentication.)</p>
+</li>
+</ol>
 </div></article></main>
 <footer><div><span>© 2018 Theatersoft, LLC</span></div></footer>
 </body>
