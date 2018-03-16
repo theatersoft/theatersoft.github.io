@@ -34,14 +34,25 @@
 <p>A Theatersoft site installation is highly customizable for your needs. This section describes common customizations, how to configure them, and how configuration works.</p>
 <p>Configuration state is persisted in various locations. A backup plan is recommended to quickly recover from mistakes or failures.</p>
 <h3 id="-theatersoft-home">@theatersoft/home</h3>
-<p>This package already automates most of the initial installation and configuration.</p>
-<h3 id="initial-configuration">Initial Configuration</h3>
-<p>Your initial configuration is created at this <a href="/install/">Installation</a> step:</p>
+<p>This package automates installation and configuration. It’s installed and used to create the initial configuration at this <a href="/install/">Installation</a> step:</p>
 <pre><code class="language-bash"><span class="token function">cd</span> <span class="token operator">&amp;&amp;</span> <span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example <span class="token comment" spellcheck="true"># replace example with your site/domain name</span>
 <span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
 <span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config deploy
 </code></pre>
-<p>The site directory <code>example</code> (or your site name) contains a custom <code>package.json</code>:</p>
+<h3 id="initial-configuration">Initial Configuration</h3>
+<p>Your site directory <code>example</code> (or your own site/domain name) contains:</p>
+<pre><code class="language-bash"> $ tree -L 1 -a
+ <span class="token keyword">.</span>
+ ├── config.json
+ ├── deploy
+ ├── .gitignore
+ ├── node_modules
+ ├── package.json
+ └── package-lock.json
+
+ 2 directories, 4 files
+</code></pre>
+<p><code>package.json</code> contains administration scripts for config and deploy:</p>
 <pre><code class="language-json"><span class="token punctuation">{</span>
   <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"Theatersoft Home site installation"</span><span class="token punctuation">,</span>
   <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
@@ -63,7 +74,7 @@
   <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"example"</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>…and the initial configuration in <code>config.json</code>:</p>
+<p><code>config.json</code> is the main site configuration file. You can modify with any text editor as long as you are careful to use valid JSON syntax. To simplify documentation, we’ll refer to properties as if they were JavaScript objects (e.g. the <code>config.hosts</code> and<code>host.services</code> arrays).</p>
 <pre><code class="language-json"><span class="token punctuation">{</span>
   <span class="token property">"_letsencrypt"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"domain"</span><span class="token operator">:</span> <span class="token string">"example.com"</span><span class="token punctuation">,</span>
@@ -91,6 +102,15 @@
   <span class="token property">"configs"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
+</code></pre>
+<p>The config script (<code>npm run config</code>) reads <code>config.json</code> to stage deployment files for each host:</p>
+<pre><code class="language-bash">tree -L 2 -a deploy/
+deploy/
+└── raspberrypi
+    ├── .bus
+    ├── package.json
+    ├── .root
+    └── theatersoft.service
 </code></pre>
 </div></article></main>
 <footer><div><span>© 2018 Theatersoft, LLC</span></div></footer>
