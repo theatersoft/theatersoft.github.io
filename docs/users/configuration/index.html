@@ -31,10 +31,10 @@
 <nav><a href="/"><svg><use href="#svg-logo"></use></svg><span>Theatersoft</span></a><ul id="_566"><a href="/docs/" class="_40d">Docs</a><a href="/install/" class>Install</a><a href="https://community.theatersoft.com/" onclick="trackLink(event)" class>Community</a><a target="_blank" href="https://github.com/theatersoft"><svg><use href="#svg-github"></use></svg></a></ul><div id="_c62"><svg><use href="#svg-list"></use></svg></div></nav>
 <header class="_593"></header>
 <main class="_485"><article><div class="markdown"><h2 id="configuration">Configuration</h2>
-<p>When you understand how the Theatersoft platform configuration works you’ll realize its full customization potential.</p>
-<p>In essence, one <code>config.json</code> file describes the configuration state for the installation. This consists of general configuration options, the <code>hosts</code> list of one or more Theatersoft servers in your site, and a <code>services</code> list of service configurations for each server. Each service configuration contains a <code>module</code> name for the corresponding <code>npm</code> package name and a <code>config</code> object for custom service options.</p>
-<p>Administration scripts automate the process of converting the configuration into a deployed server installation(s). The <code>config</code> script stages a generated <code>package.json</code> file for each server containing service modules from the configuration. The <code>deploy</code> script copies the generated files to each server and performs an <code>npm install</code> of the package. </p>
-<p>At runtime, the root server loads <code>config.json</code> and creates a <code>Config</code> bus service with an API that makes the service configuration available to each server to use to start their services.</p>
+<p>Once you understand how the Theatersoft platform configuration works you’ll realize its full customization potential.</p>
+<p>In essence, a <code>config.json</code> file describes the configuration state for the installation. It consists of general configuration options, the <code>hosts</code> list of one or more Theatersoft servers in your site, and a <code>services</code> list of service configurations for each server. Each service configuration contains a <code>module</code> name for the corresponding <code>npm</code> package name and a <code>config</code> object for custom service options.</p>
+<p>Administration scripts automate the process of converting the configuration into a deployed server installation(s). The <code>config</code> script stages a generated <code>package.json</code> file for each server containing that servers service module dependencies. The <code>deploy</code> script copies the generated packages to each server and performs the <code>npm install</code> package installation. </p>
+<p>At runtime, the root server loads <code>config.json</code> and creates a <code>Config</code> bus service with APIs that makes the service configuration available to each server to use to start their services.</p>
 <h3 id="initial-configuration">Initial Configuration</h3>
 <p>The <code>@theatersoft/home</code> package automates installation and configuration. It was installed and used during <a href="/install/">installation</a>:</p>
 <pre><code class="language-bash"><span class="token function">cd</span> <span class="token operator">&amp;&amp;</span> <span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example <span class="token comment" spellcheck="true"># replace example with your site/domain name</span>
@@ -50,7 +50,7 @@
  ├── package.json
  └── package-lock.json
 </code></pre>
-<p>Your site configuration file <code>config.json</code> was generated from a template. You can modify with any text editor. Always use valid JSON syntax, even if documentation refers to properties as JavaScript objects (e.g. <code>config.hosts</code>).</p>
+<p>Your site configuration file <code>config.json</code> was generated from a template. You can modify it with any text editor. Always use valid JSON syntax, even if documentation refers to properties as JavaScript objects (e.g. <code>config.hosts</code>).</p>
 <pre><code class="language-json"><span class="token punctuation">{</span>
   <span class="token property">"_letsencrypt"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"domain"</span><span class="token operator">:</span> <span class="token string">"example.com"</span><span class="token punctuation">,</span>
@@ -101,7 +101,7 @@
   <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"example"</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>The config script (<code>npm run config</code>) reads <code>config.json</code> to stage deployment files in <code>deploy</code> for each host:</p>
+<p>The deployment files for each host are staged in <code>deploy</code>:</p>
 <pre><code class="language-bash">deploy/
 └── raspberrypi
     ├── .bus
@@ -109,6 +109,15 @@
     ├── .root
     └── theatersoft.service
 </code></pre>
+<h3 id="adding-services">Adding Services</h3>
+<p>Available services are listed in <a href="/docs/services/">Services</a>.  Check the documentation first to find any specific installation instructions such as hardware requirements.</p>
+<p>In general, there are two basic steps to add a service:</p>
+<ol>
+<li><p>Copy the sample configuration object and paste it into <code>config.json</code> by adding it to a <code>host.services[]</code> array, making any customizations as instructed.</p>
+</li>
+<li><p>Rerun <code>npm run config deploy</code></p>
+</li>
+</ol>
 </div></article></main>
 <footer><div><span>© 2018 Theatersoft, LLC</span></div></footer>
 </body>
