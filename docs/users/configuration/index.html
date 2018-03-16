@@ -31,50 +31,26 @@
 <nav><a href="/"><svg><use href="#svg-logo"></use></svg><span>Theatersoft</span></a><ul id="_566"><a href="/docs/" class="_40d">Docs</a><a href="/install/" class>Install</a><a href="https://community.theatersoft.com/" onclick="trackLink(event)" class>Community</a><a target="_blank" href="https://github.com/theatersoft"><svg><use href="#svg-github"></use></svg></a></ul><div id="_c62"><svg><use href="#svg-list"></use></svg></div></nav>
 <header class="_593"></header>
 <main class="_485"><article><div class="markdown"><h2 id="configuration">Configuration</h2>
-<p>A Theatersoft site installation is highly customizable for your needs. This section describes common customizations, how to configure them, and how configuration works.</p>
-<p>Configuration state is persisted in various locations. A backup plan is recommended to quickly recover from mistakes or failures.</p>
-<h3 id="-theatersoft-home">@theatersoft/home</h3>
-<p>This package automates installation and configuration. It’s installed and used to create the initial configuration at this <a href="/install/">Installation</a> step:</p>
+<p>When you understand how the Theatersoft platform configuration works you’ll realize its full customization potential.</p>
+<p>In essence, one <code>config.json</code> file describes the configuration state for the installation. This consists of general configuration options, the <code>hosts</code> list of one or more Theatersoft servers in your site, and a <code>services</code> list of service configurations for each server. Each service configuration contains a <code>module</code> name for the corresponding <code>npm</code> package name and a <code>config</code> object for custom service options.</p>
+<p>Administration scripts automate the process of converting the configuration into a deployed server installation(s). The <code>config</code> script stages a generated <code>package.json</code> file for each server containing service modules from the configuration. The <code>deploy</code> script copies the generated files to each server and performs an <code>npm install</code> of the package. </p>
+<p>At runtime, the root server loads <code>config.json</code> and creates a <code>Config</code> bus service with an API that makes the service configuration available to each server to use to start their services.</p>
+<h3 id="initial-configuration">Initial Configuration</h3>
+<p>The <code>@theatersoft/home</code> package automates installation and configuration. It was installed and used during <a href="/install/">installation</a>:</p>
 <pre><code class="language-bash"><span class="token function">cd</span> <span class="token operator">&amp;&amp;</span> <span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example <span class="token comment" spellcheck="true"># replace example with your site/domain name</span>
 <span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
 <span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config deploy
 </code></pre>
-<h3 id="initial-configuration">Initial Configuration</h3>
-<p>Your site directory <code>example</code> (or your own site/domain name) contains:</p>
-<pre><code class="language-bash"> $ tree -L 1 -a
- <span class="token keyword">.</span>
+<p>When you run <code>npm run config deploy</code> for the first time, it populates your site directory <code>~/example</code>:</p>
+<pre><code class="language-bash"> <span class="token keyword">.</span>
  ├── config.json
  ├── deploy
  ├── .gitignore
  ├── node_modules
  ├── package.json
  └── package-lock.json
-
- 2 directories, 4 files
 </code></pre>
-<p><code>package.json</code> contains administration scripts for config and deploy:</p>
-<pre><code class="language-json"><span class="token punctuation">{</span>
-  <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"Theatersoft Home site installation"</span><span class="token punctuation">,</span>
-  <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
-  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
-    <span class="token property">"config"</span><span class="token operator">:</span> <span class="token string">"npm explore @theatersoft/home -- npm run config"</span><span class="token punctuation">,</span>
-    <span class="token property">"deploy"</span><span class="token operator">:</span> <span class="token string">"npm explore @theatersoft/home -- npm run deploy"</span><span class="token punctuation">,</span>
-    <span class="token property">"deploy-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"npm run deploy -- -- -- raspberrypi"</span><span class="token punctuation">,</span>
-    <span class="token property">"journal-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"journalctl -u theatersoft -f --no-tail"</span><span class="token punctuation">,</span>
-    <span class="token property">"restart-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"systemctl restart theatersoft"</span><span class="token punctuation">,</span>
-    <span class="token property">"stop-office"</span><span class="token operator">:</span> <span class="token string">"systemctl stop theatersoft"</span>
-  <span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token property">"dependencies"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
-    <span class="token property">"@theatersoft/home"</span><span class="token operator">:</span> <span class="token string">"~2"</span>
-  <span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token property">"theatersoft"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
-    <span class="token property">"pack"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
-    <span class="token property">"port"</span><span class="token operator">:</span> <span class="token number">443</span>
-  <span class="token punctuation">}</span><span class="token punctuation">,</span>
-  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"example"</span>
-<span class="token punctuation">}</span>
-</code></pre>
-<p><code>config.json</code> is the main site configuration file. You can modify with any text editor as long as you are careful to use valid JSON syntax. To simplify documentation, we’ll refer to properties as if they were JavaScript objects (e.g. the <code>config.hosts</code> and<code>host.services</code> arrays).</p>
+<p>Your site configuration file <code>config.json</code> was generated from a template. You can modify with any text editor. Always use valid JSON syntax, even if documentation refers to properties as JavaScript objects (e.g. <code>config.hosts</code>).</p>
 <pre><code class="language-json"><span class="token punctuation">{</span>
   <span class="token property">"_letsencrypt"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
     <span class="token property">"domain"</span><span class="token operator">:</span> <span class="token string">"example.com"</span><span class="token punctuation">,</span>
@@ -103,9 +79,30 @@
   <span class="token punctuation">}</span>
 <span class="token punctuation">}</span>
 </code></pre>
-<p>The config script (<code>npm run config</code>) reads <code>config.json</code> to stage deployment files for each host:</p>
-<pre><code class="language-bash">tree -L 2 -a deploy/
-deploy/
+<p><code>package.json</code> contains administration scripts for config and deploy:</p>
+<pre><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"Theatersoft Home site installation"</span><span class="token punctuation">,</span>
+  <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"config"</span><span class="token operator">:</span> <span class="token string">"npm explore @theatersoft/home -- npm run config"</span><span class="token punctuation">,</span>
+    <span class="token property">"deploy"</span><span class="token operator">:</span> <span class="token string">"npm explore @theatersoft/home -- npm run deploy"</span><span class="token punctuation">,</span>
+    <span class="token property">"deploy-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"npm run deploy -- -- -- raspberrypi"</span><span class="token punctuation">,</span>
+    <span class="token property">"journal-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"journalctl -u theatersoft -f --no-tail"</span><span class="token punctuation">,</span>
+    <span class="token property">"restart-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"systemctl restart theatersoft"</span><span class="token punctuation">,</span>
+    <span class="token property">"stop-office"</span><span class="token operator">:</span> <span class="token string">"systemctl stop theatersoft"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"dependencies"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"@theatersoft/home"</span><span class="token operator">:</span> <span class="token string">"~2"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"theatersoft"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"pack"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    <span class="token property">"port"</span><span class="token operator">:</span> <span class="token number">443</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"example"</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>The config script (<code>npm run config</code>) reads <code>config.json</code> to stage deployment files in <code>deploy</code> for each host:</p>
+<pre><code class="language-bash">deploy/
 └── raspberrypi
     ├── .bus
     ├── package.json
