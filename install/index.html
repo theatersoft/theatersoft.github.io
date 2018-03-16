@@ -55,11 +55,10 @@
 <pre><code>curl -sL https://deb.nodesource.com/setup_8.x <span class="token operator">|</span> <span class="token function">sudo</span> -E <span class="token function">bash</span> -
 <span class="token function">sudo</span> <span class="token function">apt-get</span> <span class="token function">install</span> -y nodejs
 </code></pre><h3 id="4-install-theatersoft-home">4. Install Theatersoft Home</h3>
-<p>Create a directory to store your Theatersoft configuration; then install, configure, and deploy <code>@theatersoft/home</code>:</p>
-<pre><code><span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example
+<p>Create a directory to store your Theatersoft site configuration. Then install, configure, and deploy <code>@theatersoft/home</code>:</p>
+<pre><code><span class="token function">cd</span> <span class="token operator">&amp;&amp;</span> <span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example   <span class="token comment" spellcheck="true"># replace example with your site/domain name</span>
 <span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
-<span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config
-<span class="token function">npm</span> run deploy
+<span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config deploy
 </code></pre><p>The Theatersoft server is now running.  The next step will enable you to access it from outside your home network.</p>
 <h3 id="5-configure-dynamic-dns-and-server-ssl-certificate">5. Configure dynamic DNS and server SSL certificate</h3>
 <blockquote>

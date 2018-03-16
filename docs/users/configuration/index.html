@@ -31,6 +31,67 @@
 <nav><a href="/"><svg><use href="#svg-logo"></use></svg><span>Theatersoft</span></a><ul id="_566"><a href="/docs/" class="_40d">Docs</a><a href="/install/" class>Install</a><a href="https://community.theatersoft.com/" onclick="trackLink(event)" class>Community</a><a target="_blank" href="https://github.com/theatersoft"><svg><use href="#svg-github"></use></svg></a></ul><div id="_c62"><svg><use href="#svg-list"></use></svg></div></nav>
 <header class="_593"></header>
 <main class="_485"><article><div class="markdown"><h2 id="configuration">Configuration</h2>
+<p>A Theatersoft site installation is highly customizable for your needs. This section describes common customizations, how to configure them, and how configuration works.</p>
+<p>Configuration state is persisted in various locations. A backup plan is recommended to quickly recover from mistakes or failures.</p>
+<h3 id="-theatersoft-home">@theatersoft/home</h3>
+<p>This package already automates most of the initial installation and configuration.</p>
+<h3 id="initial-configuration">Initial Configuration</h3>
+<p>Your initial configuration is created at this <a href="/install/">Installation</a> step:</p>
+<pre><code class="language-bash"><span class="token function">cd</span> <span class="token operator">&amp;&amp;</span> <span class="token function">mkdir</span> example <span class="token operator">&amp;&amp;</span> <span class="token function">cd</span> example <span class="token comment" spellcheck="true"># replace example with your site/domain name</span>
+<span class="token function">npm</span> <span class="token function">install</span> @theatersoft/home
+<span class="token function">npm</span> explore @theatersoft/home <span class="token function">npm</span> run config deploy
+</code></pre>
+<p>The site directory <code>example</code> (or your site name) contains a custom <code>package.json</code>:</p>
+<pre><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"description"</span><span class="token operator">:</span> <span class="token string">"Theatersoft Home site installation"</span><span class="token punctuation">,</span>
+  <span class="token property">"private"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+  <span class="token property">"scripts"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"config"</span><span class="token operator">:</span> <span class="token string">"npm explore @theatersoft/home -- npm run config"</span><span class="token punctuation">,</span>
+    <span class="token property">"deploy"</span><span class="token operator">:</span> <span class="token string">"npm explore @theatersoft/home -- npm run deploy"</span><span class="token punctuation">,</span>
+    <span class="token property">"deploy-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"npm run deploy -- -- -- raspberrypi"</span><span class="token punctuation">,</span>
+    <span class="token property">"journal-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"journalctl -u theatersoft -f --no-tail"</span><span class="token punctuation">,</span>
+    <span class="token property">"restart-raspberrypi"</span><span class="token operator">:</span> <span class="token string">"systemctl restart theatersoft"</span><span class="token punctuation">,</span>
+    <span class="token property">"stop-office"</span><span class="token operator">:</span> <span class="token string">"systemctl stop theatersoft"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"dependencies"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"@theatersoft/home"</span><span class="token operator">:</span> <span class="token string">"~2"</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"theatersoft"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"pack"</span><span class="token operator">:</span> <span class="token boolean">false</span><span class="token punctuation">,</span>
+    <span class="token property">"port"</span><span class="token operator">:</span> <span class="token number">443</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"example"</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>…and the initial configuration in <code>config.json</code>:</p>
+<pre><code class="language-json"><span class="token punctuation">{</span>
+  <span class="token property">"_letsencrypt"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+    <span class="token property">"domain"</span><span class="token operator">:</span> <span class="token string">"example.com"</span><span class="token punctuation">,</span>
+    <span class="token property">"email"</span><span class="token operator">:</span> <span class="token string">"email@example.com"</span><span class="token punctuation">,</span>
+    <span class="token property">"production"</span><span class="token operator">:</span> <span class="token boolean">true</span>
+  <span class="token punctuation">}</span><span class="token punctuation">,</span>
+  <span class="token property">"password"</span><span class="token operator">:</span> <span class="token string">"0000"</span><span class="token punctuation">,</span>
+  <span class="token property">"hosts"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+    <span class="token punctuation">{</span>
+      <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"raspberrypi"</span><span class="token punctuation">,</span>
+      <span class="token property">"host"</span><span class="token operator">:</span> <span class="token string">"raspberrypi.local"</span><span class="token punctuation">,</span>
+      <span class="token property">"mac"</span><span class="token operator">:</span> <span class="token string">"00:00:00:00:00:0"</span><span class="token punctuation">,</span>
+      <span class="token property">"services"</span><span class="token operator">:</span> <span class="token punctuation">[</span>
+        <span class="token punctuation">{</span>
+          <span class="token property">"enabled"</span><span class="token operator">:</span> <span class="token boolean">true</span><span class="token punctuation">,</span>
+          <span class="token property">"module"</span><span class="token operator">:</span> <span class="token string">"@theatersoft/device"</span><span class="token punctuation">,</span>
+          <span class="token property">"export"</span><span class="token operator">:</span> <span class="token string">"Device"</span><span class="token punctuation">,</span>
+          <span class="token property">"name"</span><span class="token operator">:</span> <span class="token string">"Device"</span><span class="token punctuation">,</span>
+          <span class="token property">"config"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+          <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+      <span class="token punctuation">]</span>
+    <span class="token punctuation">}</span>
+  <span class="token punctuation">]</span><span class="token punctuation">,</span>
+  <span class="token property">"configs"</span><span class="token operator">:</span> <span class="token punctuation">{</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
 </div></article></main>
 <footer><div><span>© 2018 Theatersoft, LLC</span></div></footer>
 </body>
